@@ -8,17 +8,21 @@ const firebaseConfig = {
   appId: "1:866172124153:web:8ecd00f213e4886c0d9b28"
 };
 
-// Inicializa Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// Elementos de la UI
+// UI Elements
 const loginScreen = document.getElementById('login-screen');
 const appScreen = document.querySelector('.app');
 const tbody = document.querySelector('#projects-table tbody');
+const form = document.getElementById('addForm');
+const addModalEl = document.getElementById('addModal');
+const addModal = new bootstrap.Modal(addModalEl);
 
-// Manejar cambio de estado
+let editId = null;
+
+// Estado de auth
 auth.onAuthStateChanged(user => {
   if (user) {
     mostrarApp(user);
@@ -42,26 +46,22 @@ function mostrarLogin() {
   document.getElementById('login-btn').addEventListener('click', () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-
-    auth.signInWithEmailAndPassword(email, password)
-      .catch(err => alert(err.message));
+    auth.signInWithEmailAndPassword(email, password).catch(err => alert(err.message));
   });
 }
 
 function mostrarApp(user) {
   loginScreen.style.display = 'none';
   appScreen.style.display = 'flex';
-
   cargarProyectos();
-
 }
 
+// Cargar tabla
 function cargarProyectos() {
-  const tbody = document.querySelector('#projects-table tbody');
   tbody.innerHTML = '';
 
-  db.collection('proyectos').get().then(querySnapshot => {
-    querySnapshot.forEach(doc => {
+  db.collection('proyectos').get().then(snapshot => {
+    snapshot.forEach(doc => {
       const data = doc.data();
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -85,45 +85,17 @@ function cargarProyectos() {
       tbody.appendChild(tr);
     });
 
-    // Asigna eventos después de llenar la tabla
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        eliminarProyecto(id);
-      });
-    });
-
     document.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        editarProyecto(id);
-      });
+      btn.onclick = () => editarProyecto(btn.dataset.id);
     });
-  }).catch(err => {
-    console.error("Error al cargar proyectos: ", err);
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.onclick = () => eliminarProyecto(btn.dataset.id);
+    });
   });
 }
 
-
-
-const hamburger = document.getElementById('hamburger');
-const sidebar = document.querySelector('.sidebar');
-
-if (hamburger) {
-  hamburger.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-  });
-}
-
-
-// Inicializar modal Bootstrap
-const addModal = new bootstrap.Modal(document.getElementById('addModal'));
-
-document.querySelector('.add-btn').addEventListener('click', () => {
-  addModal.show();
-});
-
-// Manejar “Otro”
+// Manejo “Otro”
 function handleOtro(selectId, inputId) {
   const select = document.getElementById(selectId);
   const input = document.getElementById(inputId);
@@ -132,15 +104,21 @@ function handleOtro(selectId, inputId) {
   });
 }
 
-handleOtro('proyecto', 'proyectoOtro');
-handleOtro('p0', 'p0Otro');
-handleOtro('estado', 'estadoOtro');
-handleOtro('firmaSg', 'firmaSgOtro');
+['proyecto', 'p0', 'estado', 'firmaSg'].forEach(id => {
+  handleOtro(id, id + 'Otro');
+});
 
+document.querySelector('.add-btn').addEventListener('click', () => {
+  editId = null;
+  form.reset();
+  document.querySelectorAll('#addForm input[type="text"]').forEach(input => {
+    if (input.id.endsWith('Otro')) input.style.display = 'none';
+  });
+  addModal.show();
+});
 
-
-
-document.getElementById('addForm').addEventListener('submit', (e) => {
+// Enviar formulario
+form.addEventListener('submit', (e) => {
   e.preventDefault();
 
   const getValue = (selectId, otroId) => {
@@ -149,73 +127,58 @@ document.getElementById('addForm').addEventListener('submit', (e) => {
     return select.value === 'Otro' ? otro.value.trim() : select.value;
   };
 
-  const proyecto = getValue('proyecto', 'proyectoOtro');
-  const p0 = getValue('p0', 'p0Otro');
-  const categorizacion = document.getElementById('categorizacion').value.trim();
-  const propietario = document.getElementById('propietario').value.trim();
-  const estado = getValue('estado', 'estadoOtro');
-  const limiteVraCat = document.getElementById('limiteVraCat').value;
-  const vraCat = document.getElementById('vraCat').value.trim();
-  const limiteFirma = document.getElementById('limiteFirma').value;
-  const firmaSg = getValue('firmaSg', 'firmaSgOtro');
-  const fechaCierre = document.getElementById('fechaCierre').value;
-  const notas = document.getElementById('notas').value.trim();
-  const distribuible = document.getElementById('distribuible').value.trim();
+  const data = {
+    nombre: getValue('proyecto', 'proyectoOtro'),
+    prioridad: getValue('p0', 'p0Otro'),
+    categorizacion: document.getElementById('categorizacion').value.trim(),
+    propietario: document.getElementById('propietario').value.trim(),
+    estado: getValue('estado', 'estadoOtro'),
+    limiteVraCat: document.getElementById('limiteVraCat').value,
+    vraCat: document.getElementById('vraCat').value.trim(),
+    limiteFirma: document.getElementById('limiteFirma').value,
+    firmaSg: getValue('firmaSg', 'firmaSgOtro'),
+    fechaCierre: document.getElementById('fechaCierre').value,
+    notas: document.getElementById('notas').value.trim(),
+    distribuible: document.getElementById('distribuible').value.trim()
+  };
 
-  db.collection('proyectos').add({
-    nombre: proyecto,
-    prioridad: p0,
-    categorizacion,
-    propietario,
-    estado,
-    limiteVraCat,
-    vraCat,
-    limiteFirma,
-    firmaSg,
-    fechaCierre,
-    notas,
-    distribuible
-  }).then(() => {
-    console.log("Proyecto agregado");
-    bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
-    document.getElementById('addForm').reset();
-    // Ocultar inputs “otro”
-    document.querySelectorAll('#addForm input[type="text"]').forEach(input => {
-      if (input.id.endsWith('Otro')) input.style.display = 'none';
+  if (editId) {
+    db.collection('proyectos').doc(editId).update(data).then(() => {
+      console.log("Proyecto actualizado");
+      addModal.hide();
+      cargarProyectos();
+      editId = null;
+    }).catch(err => {
+      alert("Error al actualizar: " + err.message);
     });
-    cargarProyectos();
-  }).catch(err => {
-    console.error("Error al agregar proyecto: ", err);
-    alert("Error al agregar proyecto: " + err.message);
-  });
+  } else {
+    db.collection('proyectos').add(data).then(() => {
+      console.log("Proyecto agregado");
+      addModal.hide();
+      cargarProyectos();
+    }).catch(err => {
+      alert("Error al agregar: " + err.message);
+    });
+  }
 });
 
-
 function eliminarProyecto(id) {
-  if (confirm("¿Estás seguro de eliminar este proyecto?")) {
-    db.collection('proyectos').doc(id).delete()
-      .then(() => {
-        console.log("Proyecto eliminado");
-        cargarProyectos();
-      })
-      .catch(err => {
-        console.error("Error al eliminar proyecto: ", err);
-        alert("Error al eliminar proyecto: " + err.message);
-      });
+  if (confirm("¿Eliminar proyecto?")) {
+    db.collection('proyectos').doc(id).delete().then(() => {
+      cargarProyectos();
+    }).catch(err => {
+      alert("Error al eliminar: " + err.message);
+    });
   }
 }
 
-
 function editarProyecto(id) {
-  const modal = new bootstrap.Modal(document.getElementById('addModal'));
-  const form = document.getElementById('addForm');
-
   db.collection('proyectos').doc(id).get().then(doc => {
     if (!doc.exists) return;
 
     const data = doc.data();
+    editId = id;
 
-    // Rellena el formulario
     document.getElementById('proyecto').value = data.nombre || '';
     document.getElementById('p0').value = data.prioridad || '';
     document.getElementById('categorizacion').value = data.categorizacion || '';
@@ -229,36 +192,6 @@ function editarProyecto(id) {
     document.getElementById('notas').value = data.notas || '';
     document.getElementById('distribuible').value = data.distribuible || '';
 
-    // Abre el modal
-    modal.show();
-
-    // Sobrescribe el submit temporalmente
-    form.onsubmit = (e) => {
-      e.preventDefault();
-
-      const updatedData = {
-        nombre: document.getElementById('proyecto').value.trim(),
-        prioridad: document.getElementById('p0').value.trim(),
-        categorizacion: document.getElementById('categorizacion').value.trim(),
-        propietario: document.getElementById('propietario').value.trim(),
-        estado: document.getElementById('estado').value.trim(),
-        limiteVraCat: document.getElementById('limiteVraCat').value,
-        vraCat: document.getElementById('vraCat').value.trim(),
-        limiteFirma: document.getElementById('limiteFirma').value,
-        firmaSg: document.getElementById('firmaSg').value.trim(),
-        fechaCierre: document.getElementById('fechaCierre').value,
-        notas: document.getElementById('notas').value.trim(),
-        distribuible: document.getElementById('distribuible').value.trim()
-      };
-
-      db.collection('proyectos').doc(id).update(updatedData).then(() => {
-        console.log("Proyecto actualizado");
-        modal.hide();
-        cargarProyectos();
-      }).catch(err => {
-        console.error("Error al actualizar: ", err);
-        alert("Error al actualizar: " + err.message);
-      });
-    };
+    addModal.show();
   });
 }
