@@ -79,13 +79,18 @@ function cargarProyectos() {
   });
 }
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  auth.signOut()
-    .then(() => {
-      console.log("Sesión cerrada");
-      location.reload(); // Opcional, recarga para volver al login
-    })
-    .catch((error) => {
-      console.error("Error al cerrar sesión", error);
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      auth.signOut()
+        .then(() => {
+          console.log("Sesión cerrada");
+          location.reload();
+        })
+        .catch((error) => {
+          console.error("Error al cerrar sesión", error);
+        });
     });
+  }
 });
