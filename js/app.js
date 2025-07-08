@@ -54,15 +54,6 @@ function mostrarApp(user) {
 
   cargarProyectos();
 
-  // Agregar botón de logout si no existe
-  if (!document.getElementById('logout-btn')) {
-    const logoutBtn = document.createElement('button');
-    logoutBtn.id = 'logout-btn';
-    logoutBtn.textContent = 'Cerrar sesión';
-    logoutBtn.style.margin = '10px';
-    logoutBtn.addEventListener('click', () => auth.signOut());
-    appScreen.prepend(logoutBtn);
-  }
 }
 
 function cargarProyectos() {
