@@ -1,19 +1,36 @@
 // Inicializa Firebase
-firebase.initializeApp({
-  apiKey: "AIzaSyBkOn-up3m6LVbEoWZh-7yT-sYFtCN_ja0",
-  authDomain: "balesch-c4277.firebaseapp.com",
-  projectId: "balesch-c4277",
-  storageBucket: "balesch-c4277.firebasestorage.app",
-  messagingSenderId: "866172124153",
-  appId: "1:866172124153:web:8ecd00f213e4886c0d9b28"
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+// Función para iniciar sesión con email/password
+function login(email, password) {
+  auth.signInWithEmailAndPassword(email, password)
+    .then(userCredential => {
+      console.log("Usuario autenticado:", userCredential.user.uid);
+      // aquí llamas a tu función que carga los datos del Firestore
+      loadProjects();
+    })
+    .catch(error => {
+      console.error("Error al iniciar sesión:", error);
+    });
+}
+
+// Ejemplo: login al cargar la página (solo para prueba)
+document.addEventListener('DOMContentLoaded', () => {
+  // ⚠️ Aquí puedes reemplazar por un formulario en tu página
+  login('usuario@ejemplo.com', 'contraseña123');
 });
 
-// Obtén la instancia de Firestore
-const db = firebase.firestore();
-
-// Ejemplo: prueba leer una colección
-db.collection("proyectos").get().then(snapshot => {
-  snapshot.forEach(doc => {
-    console.log(doc.id, "=>", doc.data());
-  });
-}).catch(console.error);
+// Función para leer proyectos solo si está autenticado
+function loadProjects() {
+  db.collection("projects").get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        console.log(doc.id, "=>", doc.data());
+      });
+    })
+    .catch(error => {
+      console.error("Error al leer proyectos:", error);
+    });
+}
