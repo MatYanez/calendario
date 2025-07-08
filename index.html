@@ -85,95 +85,116 @@
 
 
 <!-- Modal -->
-<div id="addModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Agregar Proyecto</h2>
-    <form id="addForm">
-      <label>Proyecto
-        <select name="proyecto" id="proyecto">
-          <option value="">Selecciona</option>
-          <option value="FIA">FIA</option>
-          <option value="FONDART">FONDART</option>
-          <option value="CIENCIA ABIERTA">CIENCIA ABIERTA</option>
-          <option value="CORFO">CORFO</option>
-          <option value="IDEA I+D">IDEA I+D</option>
-          <option value="Otro">Otro</option>
-        </select>
-        <input type="text" id="proyectoOtro" placeholder="Especificar otro" style="display:none;">
-      </label>
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalLabel">Agregar Proyecto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Proyecto</label>
+              <select class="form-select" id="proyecto">
+                <option value="">Selecciona</option>
+                <option value="FIA">FIA</option>
+                <option value="FONDART">FONDART</option>
+                <option value="CIENCIA ABIERTA">CIENCIA ABIERTA</option>
+                <option value="CORFO">CORFO</option>
+                <option value="IDEA I+D">IDEA I+D</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <input type="text" id="proyectoOtro" class="form-control mt-2" placeholder="Especificar otro" style="display:none;">
+            </div>
 
-      <label>P0
-        <select name="p0" id="p0">
-          <option value="">Selecciona</option>
-          <option value="p1">p1</option>
-          <option value="p2">p2</option>
-          <option value="p3">p3</option>
-          <option value="p4">p4</option>
-          <option value="Otro">Otro</option>
-        </select>
-        <input type="text" id="p0Otro" placeholder="Especificar otro" style="display:none;">
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">P0</label>
+              <select class="form-select" id="p0">
+                <option value="">Selecciona</option>
+                <option value="p1">p1</option>
+                <option value="p2">p2</option>
+                <option value="p3">p3</option>
+                <option value="p4">p4</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <input type="text" id="p0Otro" class="form-control mt-2" placeholder="Especificar otro" style="display:none;">
+            </div>
 
-      <label>Categorización
-        <select name="categorizacion" id="categorizacion">
-          <option value="">Selecciona</option>
-          <option value="Prioritario">Prioritario</option>
-          <option value="Desarrollo">Desarrollo</option>
-        </select>
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">Categorización</label>
+              <select class="form-select" id="categorizacion">
+                <option value="">Selecciona</option>
+                <option value="Prioritario">Prioritario</option>
+                <option value="Desarrollo">Desarrollo</option>
+              </select>
+            </div>
 
-      <label>Propietario
-        <input type="text" id="propietario">
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">Propietario</label>
+              <input type="text" id="propietario" class="form-control">
+            </div>
 
-      <label>Estado
-        <select name="estado" id="estado">
-          <option value="">Selecciona</option>
-          <option value="Finalizando formulacion">Finalizando formulacion</option>
-          <option value="Proceso de formular">Proceso de formular</option>
-          <option value="Investigador no inicia">Investigador no inicia</option>
-          <option value="Otro">Otro</option>
-        </select>
-        <input type="text" id="estadoOtro" placeholder="Especificar otro" style="display:none;">
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">Estado</label>
+              <select class="form-select" id="estado">
+                <option value="">Selecciona</option>
+                <option value="Finalizando formulacion">Finalizando formulacion</option>
+                <option value="Proceso de formular">Proceso de formular</option>
+                <option value="Investigador no inicia">Investigador no inicia</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <input type="text" id="estadoOtro" class="form-control mt-2" placeholder="Especificar otro" style="display:none;">
+            </div>
 
-      <label>Límite VRA/CAT
-        <input type="date" id="limiteVraCat">
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">Límite VRA/CAT</label>
+              <input type="date" id="limiteVraCat" class="form-control">
+            </div>
 
-      <label>VRA/CAT
-        <input type="text" id="vraCat">
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">VRA/CAT</label>
+              <input type="text" id="vraCat" class="form-control">
+            </div>
 
-      <label>Límite firma
-        <input type="date" id="limiteFirma">
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">Límite firma</label>
+              <input type="date" id="limiteFirma" class="form-control">
+            </div>
 
-      <label>Firma SG
-        <select name="firmaSg" id="firmaSg">
-          <option value="">Selecciona</option>
-          <option value="Firma lista">Firma lista</option>
-          <option value="Etapa de formulacion">Etapa de formulacion</option>
-          <option value="Otro">Otro</option>
-        </select>
-        <input type="text" id="firmaSgOtro" placeholder="Especificar otro" style="display:none;">
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">Firma SG</label>
+              <select class="form-select" id="firmaSg">
+                <option value="">Selecciona</option>
+                <option value="Firma lista">Firma lista</option>
+                <option value="Etapa de formulacion">Etapa de formulacion</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <input type="text" id="firmaSgOtro" class="form-control mt-2" placeholder="Especificar otro" style="display:none;">
+            </div>
 
-      <label>Fecha de cierre
-        <input type="date" id="fechaCierre">
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">Fecha de cierre</label>
+              <input type="date" id="fechaCierre" class="form-control">
+            </div>
 
-      <label>Notas
-        <textarea id="notas"></textarea>
-      </label>
+            <div class="col-md-6">
+              <label class="form-label">Notas</label>
+              <textarea id="notas" class="form-control"></textarea>
+            </div>
 
-      <label>Distribuible
-        <input type="text" id="distribuible">
-      </label>
-
-      <button type="submit">Guardar</button>
-    </form>
+            <div class="col-md-6">
+              <label class="form-label">Distribuible</label>
+              <input type="text" id="distribuible" class="form-control">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" form="addForm" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
   </div>
 </div>
 
