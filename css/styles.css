@@ -78,7 +78,7 @@ button {
 
 /* ===== Sidebar ===== */
 .sidebar {
-  width: 220px;
+  min-width: 255px;
   background: #fff;
   border-right: 1px solid #ddd;
   display: flex;
