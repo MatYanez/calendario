@@ -1,4 +1,4 @@
-/* Tipografía general */
+/* ===== Tipografía general ===== */
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -9,9 +9,10 @@ body {
 
 button {
   cursor: pointer;
+  font-family: inherit;
 }
 
-/* Pantalla de login */
+/* ===== Pantalla de login ===== */
 .login-screen {
   display: flex;
   justify-content: center;
@@ -69,59 +70,83 @@ button {
   background: #005ecb;
 }
 
-/* App general */
+/* ===== App general ===== */
 .app {
   display: flex;
   height: 100vh;
 }
 
-/* Sidebar */
+/* ===== Sidebar ===== */
 .sidebar {
+  width: 220px;
   background: #fff;
-  width: 240px;
-  box-shadow: 2px 0 6px rgba(0,0,0,0.05);
+  border-right: 1px solid #ddd;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding-top: 1rem;
+  height: 100vh;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.05);
 }
 
 .sidebar .logo {
   font-size: 2rem;
-  margin-bottom: 2rem;
+  text-align: center;
+  margin: 1rem 0;
 }
 
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  flex-grow: 1;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  position: relative;
 }
 
-.sidebar .tab {
-  background: none;
+.sidebar .tab,
+#logoutBtn {
+  display: block;
+  margin: 0 1rem;
+  padding: 0.75rem 1rem;
   border: none;
+  border-radius: 6px;
+  background: #f9f9f9;
   text-align: left;
-  padding: 1rem;
-  width: 100%;
+  cursor: pointer;
   font-size: 1rem;
   color: #333;
-  transition: background 0.2s;
+  transition: background 0.3s, box-shadow 0.2s;
 }
 
-.sidebar .tab.active,
-.sidebar .tab:hover {
-  background: #f0f4ff;
-  color: #007aff;
+.sidebar .tab:hover,
+#logoutBtn:hover {
+  background: #eee;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
 }
 
-/* Main content */
+.sidebar .tab.active {
+  background: #e0e0e0;
+  font-weight: 600;
+}
+
+#logoutBtn {
+  margin-top: auto;
+  margin-bottom: 1rem;
+  color: #c00;
+  background: #f9f9f9;
+}
+
+#logoutBtn:hover {
+  background: #ffe0e0;
+}
+
+/* ===== Main content ===== */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* Header */
+/* ===== Header ===== */
 .header {
   display: flex;
   justify-content: space-between;
@@ -153,14 +178,13 @@ button {
   background: #005ecb;
 }
 
-/* Content area */
+/* ===== Content area ===== */
 .content-area {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
 
-/* Table */
 .table-container {
   flex: 2;
   overflow-x: auto;
@@ -191,7 +215,6 @@ tr:hover {
   background: #f9f9f9;
 }
 
-/* Calendar */
 .calendar-container {
   flex: 1;
   padding: 1rem;
@@ -202,28 +225,11 @@ tr:hover {
 }
 
 .calendar-container h3 {
-  margin-top: 0;
+  margin: 0 0 1rem 0;
   font-weight: 500;
-  margin-bottom: 1rem;
 }
 
-/* Logout button */
-#logoutBtn {
-  margin-top: auto;
-  margin-bottom: 1rem;
-  padding: 0.5rem 1rem;
-  background: #ff3b30;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  transition: background 0.2s;
-}
-
-#logoutBtn:hover {
-  background: #e02c23;
-}
-
-/* Responsive */
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
   .app {
     flex-direction: column;
@@ -231,14 +237,14 @@ tr:hover {
 
   .sidebar {
     flex-direction: row;
-    height: 60px;
+    height: auto;
     width: 100%;
     justify-content: space-around;
   }
 
   .sidebar nav {
     flex-direction: row;
-    width: auto;
+    gap: 0.5rem;
   }
 
   .main-content {
@@ -248,222 +254,4 @@ tr:hover {
   .content-area {
     flex-direction: column;
   }
-}
-
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  width: 200px;
-  height: 100vh;
-  background-color: #fff;
-  border-right: 1px solid #ddd;
-}
-
-.sidebar .logo {
-  text-align: center;
-  font-size: 2rem;
-  margin: 1rem 0;
-}
-
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.sidebar .tab,
-#logoutBtn {
-  padding: 1rem;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  font-size: 1rem;
-  color: #333;
-  transition: background 0.3s;
-}
-
-.sidebar .tab:hover,
-#logoutBtn:hover {
-  background-color: #f0f0f0;
-}
-
-.sidebar .tab.active {
-  background-color: #e0e0e0;
-  font-weight: 600;
-}
-
-/* 👇 Para mover solo el último botón al fondo */
-.sidebar nav {
-  position: relative;
-}
-
-#logoutBtn {
-  margin-top: auto;
-  color: #c00;
-}
-
-#logoutBtn:hover {
-  background-color: #ffe0e0;
-}
-
-
-/* --- Sidebar base --- */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  width: 200px;
-  height: 100vh;
-  background-color: #fff;
-  border-right: 1px solid #ddd;
-  position: relative;
-  transition: transform 0.3s ease-in-out;
-}
-
-.sidebar .logo {
-  text-align: center;
-  font-size: 2rem;
-  margin: 1rem 0;
-}
-
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  position: relative;
-}
-
-.sidebar .tab,
-#logoutBtn {
-  padding: 1rem;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  font-size: 1rem;
-  color: #333;
-  transition: background 0.3s;
-}
-
-.sidebar .tab:hover,
-#logoutBtn:hover {
-  background-color: #f0f0f0;
-}
-
-.sidebar .tab.active {
-  background-color: #e0e0e0;
-  font-weight: 600;
-}
-
-#logoutBtn {
-  margin-top: auto;
-  color: #c00;
-}
-
-#logoutBtn:hover {
-  background-color: #ffe0e0;
-}
-
-/* --- Main content --- */
-.main-content {
-  flex: 1;
-  padding: 1rem;
-}
-
-/* --- App container --- */
-.app {
-  display: flex;
-  flex-direction: row;
-  min-height: 100vh;
-}
-
-/* --- Ocultar hamburguesa en desktop --- */
-.hamburger {
-  display: none;
-}
-
-
-/* --- Responsive: ocultar sidebar en móviles --- */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    transform: translateX(-100%);
-    z-index: 1000;
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .hamburger {
-    display: block;
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 1100;
-    cursor: pointer;
-    background: #fff;
-    border: 1px solid #ddd;
-    padding: 0.5rem;
-    border-radius: 4px;
-  }
-
-  .app {
-    flex-direction: column;
-  }
-}
-
-
-
-
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  position: relative;
-  padding: 1rem 0; /* espacio arriba/abajo */
-  gap: 0.5rem; /* espacio entre los botones */
-}
-
-.sidebar .tab,
-#logoutBtn {
-  display: block;
-  margin: 0 1rem; /* margen izquierdo/derecho */
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 6px;
-  background-color: #f9f9f9;
-  text-align: left;
-  cursor: pointer;
-  font-size: 1rem;
-  color: #333;
-  transition: background 0.3s, box-shadow 0.2s;
-  box-shadow: 0 0 0 rgba(0,0,0,0);
-}
-
-.sidebar .tab:hover,
-#logoutBtn:hover {
-  background-color: #eee;
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
-}
-
-.sidebar .tab.active {
-  background-color: #e0e0e0;
-  font-weight: 600;
-}
-
-#logoutBtn {
-  margin-top: auto;
-  margin-bottom: 1rem;
-  color: #c00;
-  background-color: #f9f9f9;
-}
-
-#logoutBtn:hover {
-  background-color: #ffe0e0;
 }
