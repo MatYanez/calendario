@@ -1,36 +1,49 @@
 // Inicializa Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBkOn-up3m6LVbEoWZh-7yT-sYFtCN_ja0",
+  authDomain: "balesch-c4277.firebaseapp.com",
+  projectId: "balesch-c4277",
+  storageBucket: "balesch-c4277.appspot.com",
+  messagingSenderId: "866172124153",
+  appId: "1:866172124153:web:8ecd00f213e4886c0d9b28"
+};
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// Función para iniciar sesión con email/password
-function login(email, password) {
+const loginScreen = document.getElementById('login-screen');
+const appScreen = document.getElementById('app');
+
+document.getElementById('loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
   auth.signInWithEmailAndPassword(email, password)
     .then(userCredential => {
-      console.log("Usuario autenticado:", userCredential.user.uid);
-      // aquí llamas a tu función que carga los datos del Firestore
-      loadProjects();
+      console.log("Autenticado:", userCredential.user.uid);
+      showApp();
     })
-    .catch(error => {
-      console.error("Error al iniciar sesión:", error);
+    .catch(err => {
+      alert("Error: " + err.message);
     });
-}
-
-// Ejemplo: login al cargar la página (solo para prueba)
-document.addEventListener('DOMContentLoaded', () => {
-  // ⚠️ Aquí puedes reemplazar por un formulario en tu página
-  login('usuario@ejemplo.com', 'contraseña123');
 });
 
-// Función para leer proyectos solo si está autenticado
-function loadProjects() {
-  db.collection("projects").get()
-    .then(snapshot => {
-      snapshot.forEach(doc => {
-        console.log(doc.id, "=>", doc.data());
-      });
-    })
-    .catch(error => {
-      console.error("Error al leer proyectos:", error);
-    });
+auth.onAuthStateChanged(user => {
+  if (user) {
+    showApp();
+  } else {
+    showLogin();
+  }
+});
+
+function showApp() {
+  loginScreen.style.display = 'none';
+  appScreen.style.display = 'flex';
+}
+
+function showLogin() {
+  loginScreen.style.display = 'flex';
+  appScreen.style.display = 'none';
 }
