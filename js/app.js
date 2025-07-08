@@ -195,3 +195,11 @@ function editarProyecto(id) {
     addModal.show();
   });
 }
+
+document.querySelectorAll('.sidebar .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar .tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    // Aquí puedes cambiar contenido según tab.dataset.tab
+  });
+});
