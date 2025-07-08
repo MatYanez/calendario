@@ -81,8 +81,106 @@
       </div>
     </section>
 
-  </main>
+
+<!-- Modal -->
+<div id="addModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Agregar Proyecto</h2>
+    <form id="addForm">
+      <label>Proyecto
+        <select name="proyecto" id="proyecto">
+          <option value="">Selecciona</option>
+          <option value="FIA">FIA</option>
+          <option value="FONDART">FONDART</option>
+          <option value="CIENCIA ABIERTA">CIENCIA ABIERTA</option>
+          <option value="CORFO">CORFO</option>
+          <option value="IDEA I+D">IDEA I+D</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <input type="text" id="proyectoOtro" placeholder="Especificar otro" style="display:none;">
+      </label>
+
+      <label>P0
+        <select name="p0" id="p0">
+          <option value="">Selecciona</option>
+          <option value="p1">p1</option>
+          <option value="p2">p2</option>
+          <option value="p3">p3</option>
+          <option value="p4">p4</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <input type="text" id="p0Otro" placeholder="Especificar otro" style="display:none;">
+      </label>
+
+      <label>Categorización
+        <select name="categorizacion" id="categorizacion">
+          <option value="">Selecciona</option>
+          <option value="Prioritario">Prioritario</option>
+          <option value="Desarrollo">Desarrollo</option>
+        </select>
+      </label>
+
+      <label>Propietario
+        <input type="text" id="propietario">
+      </label>
+
+      <label>Estado
+        <select name="estado" id="estado">
+          <option value="">Selecciona</option>
+          <option value="Finalizando formulacion">Finalizando formulacion</option>
+          <option value="Proceso de formular">Proceso de formular</option>
+          <option value="Investigador no inicia">Investigador no inicia</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <input type="text" id="estadoOtro" placeholder="Especificar otro" style="display:none;">
+      </label>
+
+      <label>Límite VRA/CAT
+        <input type="date" id="limiteVraCat">
+      </label>
+
+      <label>VRA/CAT
+        <input type="text" id="vraCat">
+      </label>
+
+      <label>Límite firma
+        <input type="date" id="limiteFirma">
+      </label>
+
+      <label>Firma SG
+        <select name="firmaSg" id="firmaSg">
+          <option value="">Selecciona</option>
+          <option value="Firma lista">Firma lista</option>
+          <option value="Etapa de formulacion">Etapa de formulacion</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <input type="text" id="firmaSgOtro" placeholder="Especificar otro" style="display:none;">
+      </label>
+
+      <label>Fecha de cierre
+        <input type="date" id="fechaCierre">
+      </label>
+
+      <label>Notas
+        <textarea id="notas"></textarea>
+      </label>
+
+      <label>Distribuible
+        <input type="text" id="distribuible">
+      </label>
+
+      <button type="submit">Guardar</button>
+    </form>
+  </div>
+</div>
+
+
+
 <button class="hamburger" id="hamburger">☰</button>
+
+  </main>
+
 
 </div>
 
