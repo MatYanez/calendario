@@ -10,6 +10,8 @@ body {
 button {
   cursor: pointer;
   font-family: inherit;
+  border: none;
+  outline: none;
 }
 
 /* ===== Pantalla de login ===== */
@@ -62,7 +64,6 @@ button {
   font-weight: 500;
   border: none;
   border-radius: 12px;
-  cursor: pointer;
   transition: background 0.2s;
 }
 
@@ -78,48 +79,41 @@ button {
 
 /* ===== Sidebar ===== */
 .sidebar {
-  min-width: 255px;
+  width: 240px;
   background: #fff;
   border-right: 1px solid #ddd;
   display: flex;
   flex-direction: column;
   height: 100vh;
   box-shadow: 2px 0 6px rgba(0,0,0,0.05);
+  padding: 1rem 0;
 }
 
 .sidebar .logo {
-  font-size: 2rem;
+  font-size: 1.5rem;
   text-align: center;
-  margin: 1rem 0;
+  margin-bottom: 2rem;
 }
 
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
   gap: 0.5rem;
-  padding: 1rem 0;
-  position: relative;
+  padding: 0 1rem;
+  flex-grow: 1;
 }
 
-.sidebar .tab,
-#logoutBtn {
-  display: block;
-  margin: 0 1rem;
+.sidebar .tab {
   padding: 0.75rem 1rem;
-  border: none;
   border-radius: 6px;
   background: #f9f9f9;
   text-align: left;
-  cursor: pointer;
   font-size: 1rem;
   color: #333;
-  transition: background 0.3s, box-shadow 0.2s;
-  width: 100%;
+  transition: background 0.2s, box-shadow 0.2s;
 }
 
-.sidebar .tab:hover,
-#logoutBtn:hover {
+.sidebar .tab:hover {
   background: #eee;
 }
 
@@ -128,15 +122,18 @@ button {
   font-weight: 600;
 }
 
-#logoutBtn {
-  margin-top: auto;
-  margin-bottom: 1rem;
-  color: #c00;
-  background: #f9f9f9;
+.sidebar .logout-btn {
+  margin: 0 1rem 1rem 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background: #ff3b30;
+  color: white;
+  text-align: center;
+  transition: background 0.2s;
 }
 
-#logoutBtn:hover {
-  background: #ffe0e0;
+.sidebar .logout-btn:hover {
+  background: #e02c23;
 }
 
 /* ===== Main content ===== */
@@ -168,7 +165,6 @@ button {
   padding: 0.5rem 1rem;
   background: #007aff;
   color: #fff;
-  border: none;
   border-radius: 12px;
   font-weight: 500;
   transition: background 0.2s;
@@ -229,6 +225,20 @@ tr:hover {
   font-weight: 500;
 }
 
+/* ===== Modal ===== */
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+}
+
+.modal-content .close {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .app {
@@ -254,72 +264,4 @@ tr:hover {
   .content-area {
     flex-direction: column;
   }
-}
-
-
-/* ===== Modal ===== */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content .close {
-  position: absolute;
-  top: 1rem; right: 1rem;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.modal-content label {
-  display: block;
-  margin-bottom: 1rem;
-}
-
-.modal-content input,
-.modal-content select,
-.modal-content textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-top: 0.25rem;
-}
-
-.modal-content textarea {
-  resize: vertical;
-}
-
-.modal-content button[type="submit"] {
-  margin-top: 1rem;
-  background: #007aff;
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.modal-content button[type="submit"]:hover {
-  background: #005ecb;
 }
