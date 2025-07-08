@@ -1,0 +1,121 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f9f9f9;
+  color: #333;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 60px;
+  background: #fff;
+  border-right: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.sidebar .logo {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.sidebar .tab {
+  background: none;
+  border: none;
+  margin: 10px 0;
+  font-size: 14px;
+  cursor: pointer;
+  color: #666;
+}
+
+.sidebar .tab.active {
+  color: #007AFF;
+  font-weight: 600;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 10px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.header .search {
+  flex: 1;
+  max-width: 300px;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.header .add-btn {
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.table-container {
+  flex: 2;
+  overflow: auto;
+  background: #fff;
+  border-right: 1px solid #eee;
+}
+
+.calendar-container {
+  flex: 1;
+  padding: 20px;
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+th {
+  background: #f1f1f1;
+  font-weight: 500;
+}
+
+tr:hover {
+  background: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+  .content-area {
+    flex-direction: column;
+  }
+  .calendar-container {
+    order: -1;
+  }
+}
