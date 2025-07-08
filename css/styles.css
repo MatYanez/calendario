@@ -308,3 +308,111 @@ tr:hover {
 #logoutBtn:hover {
   background-color: #ffe0e0;
 }
+
+
+/* --- Sidebar base --- */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  width: 200px;
+  height: 100vh;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  position: relative;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar .logo {
+  text-align: center;
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  position: relative;
+}
+
+.sidebar .tab,
+#logoutBtn {
+  padding: 1rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+  transition: background 0.3s;
+}
+
+.sidebar .tab:hover,
+#logoutBtn:hover {
+  background-color: #f0f0f0;
+}
+
+.sidebar .tab.active {
+  background-color: #e0e0e0;
+  font-weight: 600;
+}
+
+#logoutBtn {
+  margin-top: auto;
+  color: #c00;
+}
+
+#logoutBtn:hover {
+  background-color: #ffe0e0;
+}
+
+/* --- Main content --- */
+.main-content {
+  flex: 1;
+  padding: 1rem;
+}
+
+/* --- App container --- */
+.app {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+}
+
+/* --- Responsive: ocultar sidebar en móviles --- */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    z-index: 1000;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .hamburger {
+    display: block;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1100;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+
+  .app {
+    flex-direction: column;
+  }
+}
+
+/* --- Ocultar hamburguesa en desktop --- */
+.hamburger {
+  display: none;
+}

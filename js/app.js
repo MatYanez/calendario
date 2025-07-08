@@ -90,3 +90,13 @@ function cargarProyectos() {
     });
   }).catch(err => console.error(err));
 }
+
+
+const hamburger = document.getElementById('hamburger');
+const sidebar = document.querySelector('.sidebar');
+
+if (hamburger) {
+  hamburger.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+  });
+}
