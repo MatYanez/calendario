@@ -78,3 +78,14 @@ function cargarProyectos() {
     console.error("Error al cargar proyectos: ", err);
   });
 }
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  auth.signOut()
+    .then(() => {
+      console.log("Sesión cerrada");
+      location.reload(); // Opcional, recarga para volver al login
+    })
+    .catch((error) => {
+      console.error("Error al cerrar sesión", error);
+    });
+});
