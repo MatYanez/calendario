@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión de Proyectos</title>
+<link rel="stylesheet" href="css/styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Barra lateral -->
+  <aside class="sidebar">
+    <div class="logo">📁</div>
+    <nav>
+      <button class="tab active">Proyectos</button>
+      <button class="tab">Dashboard</button>
+      <button class="tab">Configuración</button>
+    </nav>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+
+    <!-- Header -->
+    <header class="header">
+      <input type="text" class="search" placeholder="Buscar proyecto...">
+      <button class="add-btn">+ Agregar Proyecto</button>
+    </header>
+
+    <!-- Área dividida -->
+    <section class="content-area">
+      <div class="table-container">
+        <table id="projects-table">
+          <thead>
+            <tr>
+              <th>Proyecto</th>
+              <th>Prioridad</th>
+              <th>Categorización</th>
+              <th>Propietario</th>
+              <th>Estado</th>
+              <th>Límite VRA/CAT</th>
+              <th>VRA/CAT</th>
+              <th>Límite Firma</th>
+              <th>Firma SG</th>
+              <th>Fecha Cierre</th>
+              <th>Notas</th>
+              <th>Distribuible</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Las filas se llenarán dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="calendar-container">
+        <h3>Calendario</h3>
+        <div id="calendar">
+          <!-- Aquí irá el calendario dinámico -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
