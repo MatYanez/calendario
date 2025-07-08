@@ -9,16 +9,20 @@
 </head>
 <body>
 
+<!-- Pantalla de login -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <h2>Iniciar Sesión</h2>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Correo" required>
+      <input type="password" id="password" placeholder="Contraseña" required>
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+</div>
 
-  <form id="loginForm">
-  <input type="email" id="email" placeholder="Correo">
-  <input type="password" id="password" placeholder="Contraseña">
-  <button type="submit">Iniciar Sesión</button>
-</form>
-  
-
-
-<div class="app">
+<!-- Tu app -->
+<div class="app" id="app" style="display:none;">
 
   <!-- Barra lateral -->
   <aside class="sidebar">
@@ -77,15 +81,9 @@
 
 </div>
 
-<!-- Firebase App (core) -->
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-
-<!-- Firebase Firestore -->
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
-
-<!-- Tu propio código -->
 <script type="module" src="js/app.js"></script>
 
 </body>
