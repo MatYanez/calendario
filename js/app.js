@@ -93,26 +93,19 @@ if (hamburger) {
 }
 
 
-// Abrir modal
+// Inicializar modal Bootstrap
+const addModal = new bootstrap.Modal(document.getElementById('addModal'));
+
 document.querySelector('.add-btn').addEventListener('click', () => {
-  document.getElementById('addModal').style.display = 'flex';
+  addModal.show();
 });
 
-// Cerrar modal
-document.querySelector('#addModal .close').addEventListener('click', () => {
-  document.getElementById('addModal').style.display = 'none';
-});
-
-// Manejar “Otro” en selects
+// Manejar “Otro”
 function handleOtro(selectId, inputId) {
   const select = document.getElementById(selectId);
   const input = document.getElementById(inputId);
   select.addEventListener('change', () => {
-    if (select.value === 'Otro') {
-      input.style.display = 'block';
-    } else {
-      input.style.display = 'none';
-    }
+    input.style.display = select.value === 'Otro' ? 'block' : 'none';
   });
 }
 
