@@ -249,3 +249,62 @@ tr:hover {
     flex-direction: column;
   }
 }
+
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  width: 200px;
+  height: 100vh;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+}
+
+.sidebar .logo {
+  text-align: center;
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.sidebar .tab,
+#logoutBtn {
+  padding: 1rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+  transition: background 0.3s;
+}
+
+.sidebar .tab:hover,
+#logoutBtn:hover {
+  background-color: #f0f0f0;
+}
+
+.sidebar .tab.active {
+  background-color: #e0e0e0;
+  font-weight: 600;
+}
+
+/* 👇 Para mover solo el último botón al fondo */
+.sidebar nav {
+  position: relative;
+}
+
+#logoutBtn {
+  margin-top: auto;
+  color: #c00;
+}
+
+#logoutBtn:hover {
+  background-color: #ffe0e0;
+}
