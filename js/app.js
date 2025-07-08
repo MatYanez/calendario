@@ -113,3 +113,56 @@ handleOtro('proyecto', 'proyectoOtro');
 handleOtro('p0', 'p0Otro');
 handleOtro('estado', 'estadoOtro');
 handleOtro('firmaSg', 'firmaSgOtro');
+
+
+
+
+document.getElementById('addForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const getValue = (selectId, otroId) => {
+    const select = document.getElementById(selectId);
+    const otro = document.getElementById(otroId);
+    return select.value === 'Otro' ? otro.value.trim() : select.value;
+  };
+
+  const proyecto = getValue('proyecto', 'proyectoOtro');
+  const p0 = getValue('p0', 'p0Otro');
+  const categorizacion = document.getElementById('categorizacion').value.trim();
+  const propietario = document.getElementById('propietario').value.trim();
+  const estado = getValue('estado', 'estadoOtro');
+  const limiteVraCat = document.getElementById('limiteVraCat').value;
+  const vraCat = document.getElementById('vraCat').value.trim();
+  const limiteFirma = document.getElementById('limiteFirma').value;
+  const firmaSg = getValue('firmaSg', 'firmaSgOtro');
+  const fechaCierre = document.getElementById('fechaCierre').value;
+  const notas = document.getElementById('notas').value.trim();
+  const distribuible = document.getElementById('distribuible').value.trim();
+
+  db.collection('proyectos').add({
+    nombre: proyecto,
+    prioridad: p0,
+    categorizacion,
+    propietario,
+    estado,
+    limiteVraCat,
+    vraCat,
+    limiteFirma,
+    firmaSg,
+    fechaCierre,
+    notas,
+    distribuible
+  }).then(() => {
+    console.log("Proyecto agregado");
+    bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
+    document.getElementById('addForm').reset();
+    // Ocultar inputs “otro”
+    document.querySelectorAll('#addForm input[type="text"]').forEach(input => {
+      if (input.id.endsWith('Otro')) input.style.display = 'none';
+    });
+    cargarProyectos();
+  }).catch(err => {
+    console.error("Error al agregar proyecto: ", err);
+    alert("Error al agregar proyecto: " + err.message);
+  });
+});
