@@ -57,6 +57,7 @@ function mostrarApp(user) {
 }
 
 function cargarProyectos() {
+  const tbody = document.querySelector('#projects-table tbody');
   tbody.innerHTML = '';
 
   db.collection('proyectos').get().then(querySnapshot => {
@@ -75,12 +76,34 @@ function cargarProyectos() {
         <td>${data.firmaSg || ''}</td>
         <td>${data.fechaCierre || ''}</td>
         <td>${data.notas || ''}</td>
-        <td>${data.distribuible ? 'Sí' : 'No'}</td>
+        <td>${data.distribuible || ''}</td>
+        <td>
+          <button class="btn btn-sm btn-primary edit-btn" data-id="${doc.id}">Editar</button>
+          <button class="btn btn-sm btn-danger delete-btn" data-id="${doc.id}">Eliminar</button>
+        </td>
       `;
       tbody.appendChild(tr);
     });
-  }).catch(err => console.error(err));
+
+    // Asigna eventos después de llenar la tabla
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        eliminarProyecto(id);
+      });
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        editarProyecto(id);
+      });
+    });
+  }).catch(err => {
+    console.error("Error al cargar proyectos: ", err);
+  });
 }
+
 
 
 const hamburger = document.getElementById('hamburger');
@@ -166,3 +189,76 @@ document.getElementById('addForm').addEventListener('submit', (e) => {
     alert("Error al agregar proyecto: " + err.message);
   });
 });
+
+
+function eliminarProyecto(id) {
+  if (confirm("¿Estás seguro de eliminar este proyecto?")) {
+    db.collection('proyectos').doc(id).delete()
+      .then(() => {
+        console.log("Proyecto eliminado");
+        cargarProyectos();
+      })
+      .catch(err => {
+        console.error("Error al eliminar proyecto: ", err);
+        alert("Error al eliminar proyecto: " + err.message);
+      });
+  }
+}
+
+
+function editarProyecto(id) {
+  const modal = new bootstrap.Modal(document.getElementById('addModal'));
+  const form = document.getElementById('addForm');
+
+  db.collection('proyectos').doc(id).get().then(doc => {
+    if (!doc.exists) return;
+
+    const data = doc.data();
+
+    // Rellena el formulario
+    document.getElementById('proyecto').value = data.nombre || '';
+    document.getElementById('p0').value = data.prioridad || '';
+    document.getElementById('categorizacion').value = data.categorizacion || '';
+    document.getElementById('propietario').value = data.propietario || '';
+    document.getElementById('estado').value = data.estado || '';
+    document.getElementById('limiteVraCat').value = data.limiteVraCat || '';
+    document.getElementById('vraCat').value = data.vraCat || '';
+    document.getElementById('limiteFirma').value = data.limiteFirma || '';
+    document.getElementById('firmaSg').value = data.firmaSg || '';
+    document.getElementById('fechaCierre').value = data.fechaCierre || '';
+    document.getElementById('notas').value = data.notas || '';
+    document.getElementById('distribuible').value = data.distribuible || '';
+
+    // Abre el modal
+    modal.show();
+
+    // Sobrescribe el submit temporalmente
+    form.onsubmit = (e) => {
+      e.preventDefault();
+
+      const updatedData = {
+        nombre: document.getElementById('proyecto').value.trim(),
+        prioridad: document.getElementById('p0').value.trim(),
+        categorizacion: document.getElementById('categorizacion').value.trim(),
+        propietario: document.getElementById('propietario').value.trim(),
+        estado: document.getElementById('estado').value.trim(),
+        limiteVraCat: document.getElementById('limiteVraCat').value,
+        vraCat: document.getElementById('vraCat').value.trim(),
+        limiteFirma: document.getElementById('limiteFirma').value,
+        firmaSg: document.getElementById('firmaSg').value.trim(),
+        fechaCierre: document.getElementById('fechaCierre').value,
+        notas: document.getElementById('notas').value.trim(),
+        distribuible: document.getElementById('distribuible').value.trim()
+      };
+
+      db.collection('proyectos').doc(id).update(updatedData).then(() => {
+        console.log("Proyecto actualizado");
+        modal.hide();
+        cargarProyectos();
+      }).catch(err => {
+        console.error("Error al actualizar: ", err);
+        alert("Error al actualizar: " + err.message);
+      });
+    };
+  });
+}
