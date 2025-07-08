@@ -31,7 +31,7 @@ function mostrarLogin() {
   loginScreen.style.display = 'flex';
   appScreen.style.display = 'none';
   loginScreen.innerHTML = `
-    <div class="login-container">
+    <div class="login-box">
       <h1>Iniciar Sesión</h1>
       <input type="email" id="email" placeholder="Correo electrónico">
       <input type="password" id="password" placeholder="Contraseña">
