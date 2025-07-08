@@ -1,4 +1,4 @@
-// ✅ Configura Firebase
+// Configura Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBkOn-up3m6LVbEoWZh-7yT-sYFtCN_ja0",
   authDomain: "balesch-c4277.firebaseapp.com",
@@ -16,53 +16,56 @@ const auth = firebase.auth();
 // Elementos de la UI
 const loginScreen = document.getElementById('login-screen');
 const appScreen = document.querySelector('.app');
-const loginBtn = document.getElementById('login-btn');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
+const tbody = document.querySelector('#projects-table tbody');
 
-// Mostrar/ocultar según estado
+// Manejar cambio de estado
 auth.onAuthStateChanged(user => {
   if (user) {
-    loginScreen.style.display = 'none';
-    appScreen.style.display = 'flex';
-    cargarProyectos();
+    mostrarApp(user);
   } else {
-    loginScreen.style.display = 'flex';
-    appScreen.style.display = 'none';
+    mostrarLogin();
   }
 });
 
-// Login
-document.addEventListener("DOMContentLoaded", () => {
-  const loginBtn = document.getElementById("loginBtn");
+function mostrarLogin() {
+  loginScreen.style.display = 'flex';
+  appScreen.style.display = 'none';
+  loginScreen.innerHTML = `
+    <div class="login-container">
+      <h1>Iniciar Sesión</h1>
+      <input type="email" id="email" placeholder="Correo electrónico">
+      <input type="password" id="password" placeholder="Contraseña">
+      <button id="login-btn">Entrar</button>
+    </div>
+  `;
 
-  if (loginBtn) {
-    loginBtn.addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+  document.getElementById('login-btn').addEventListener('click', () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          console.log("Sesión iniciada:", userCredential.user);
-          location.reload();
-        })
-        .catch((error) => {
-          alert("Error al iniciar sesión: " + error.message);
-        });
-    });
-  }
-});
-
-
-// Logout (opcional: agrega un botón con id="logout-btn")
-const logoutBtn = document.getElementById('logout-btn');
-if (logoutBtn) {
-  logoutBtn.addEventListener('click', () => auth.signOut());
+    auth.signInWithEmailAndPassword(email, password)
+      .catch(err => alert(err.message));
+  });
 }
 
-// Cargar proyectos de Firestore
+function mostrarApp(user) {
+  loginScreen.style.display = 'none';
+  appScreen.style.display = 'flex';
+
+  cargarProyectos();
+
+  // Agregar botón de logout si no existe
+  if (!document.getElementById('logout-btn')) {
+    const logoutBtn = document.createElement('button');
+    logoutBtn.id = 'logout-btn';
+    logoutBtn.textContent = 'Cerrar sesión';
+    logoutBtn.style.margin = '10px';
+    logoutBtn.addEventListener('click', () => auth.signOut());
+    appScreen.prepend(logoutBtn);
+  }
+}
+
 function cargarProyectos() {
-  const tbody = document.querySelector('#projects-table tbody');
   tbody.innerHTML = '';
 
   db.collection('proyectos').get().then(querySnapshot => {
@@ -85,23 +88,5 @@ function cargarProyectos() {
       `;
       tbody.appendChild(tr);
     });
-  }).catch(err => {
-    console.error("Error al cargar proyectos: ", err);
-  });
+  }).catch(err => console.error(err));
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      auth.signOut()
-        .then(() => {
-          console.log("Sesión cerrada");
-          location.reload();
-        })
-        .catch((error) => {
-          console.error("Error al cerrar sesión", error);
-        });
-    });
-  }
-});
