@@ -33,15 +33,26 @@ auth.onAuthStateChanged(user => {
 });
 
 // Login
-loginBtn.addEventListener('click', () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
+document.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("loginBtn");
 
-  auth.signInWithEmailAndPassword(email, password)
-    .catch(error => {
-      alert("Error de autenticación: " + error.message);
+  if (loginBtn) {
+    loginBtn.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          console.log("Sesión iniciada:", userCredential.user);
+          location.reload();
+        })
+        .catch((error) => {
+          alert("Error al iniciar sesión: " + error.message);
+        });
     });
+  }
 });
+
 
 // Logout (opcional: agrega un botón con id="logout-btn")
 const logoutBtn = document.getElementById('logout-btn');
