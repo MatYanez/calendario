@@ -27,18 +27,16 @@
 <div class="app" id="app" style="display:none;">
 
   <!-- Barra lateral -->
-<aside class="sidebar">
-  <div class="logo">📁</div>
-<nav>
-  <div class="tabs">
-    <button class="tab active">Proyectos</button>
-    <button class="tab">Dashboard</button>
-    <button class="tab">Configuración</button>
-  </div>
-
-  <button id="logoutBtn">Cerrar sesión</button>
-</nav>
+<aside class="sidebar" id="sidebar">
+  <div class="logo">📁 Proyecto</div>
+  <nav class="tabs">
+    <button class="tab active" data-tab="proyectos">Proyectos</button>
+    <button class="tab" data-tab="dashboard">Dashboard</button>
+    <button class="tab" data-tab="configuracion">Configuración</button>
+  </nav>
+  <button id="logoutBtn" class="logout-btn">Cerrar sesión</button>
 </aside>
+
 
   <!-- Contenido principal -->
   <main class="main-content">
