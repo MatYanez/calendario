@@ -91,3 +91,32 @@ if (hamburger) {
     sidebar.classList.toggle('open');
   });
 }
+
+
+// Abrir modal
+document.querySelector('.add-btn').addEventListener('click', () => {
+  document.getElementById('addModal').style.display = 'flex';
+});
+
+// Cerrar modal
+document.querySelector('#addModal .close').addEventListener('click', () => {
+  document.getElementById('addModal').style.display = 'none';
+});
+
+// Manejar “Otro” en selects
+function handleOtro(selectId, inputId) {
+  const select = document.getElementById(selectId);
+  const input = document.getElementById(inputId);
+  select.addEventListener('change', () => {
+    if (select.value === 'Otro') {
+      input.style.display = 'block';
+    } else {
+      input.style.display = 'none';
+    }
+  });
+}
+
+handleOtro('proyecto', 'proyectoOtro');
+handleOtro('p0', 'p0Otro');
+handleOtro('estado', 'estadoOtro');
+handleOtro('firmaSg', 'firmaSgOtro');
