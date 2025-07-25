@@ -1,5 +1,3 @@
-// js/login.js
-
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
   const messageDiv = document.getElementById("loginMessage");
@@ -13,20 +11,15 @@ document.addEventListener("DOMContentLoaded", () => {
     messageDiv.textContent = "";
     messageDiv.className = "";
 
-    if (!email || !password) {
-      messageDiv.textContent = "Completa todos los campos.";
-      messageDiv.className = "error";
-      return;
-    }
-
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
-        window.location.href = "index.html"; // O dashboard.html si prefieres
+        window.location.href = "index.html";
       })
       .catch((error) => {
-        messageDiv.textContent = "Error de autenticación.";
-        messageDiv.className = "error";
+        messageDiv.textContent = "Correo o contraseña incorrectos.";
         console.error(error);
       });
   });
 });
+
+//v1
