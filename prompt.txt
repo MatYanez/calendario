@@ -1,0 +1,86 @@
+✅ PROMPT COMPLETO PARA CONTINUAR MI PROYECTO WEB
+Hola, estoy desarrollando una aplicación web con autenticación usando Firebase, Bootstrap y JavaScript puro. Ya tengo bastante avanzado, pero quiero continuar el proyecto manteniendo la estructura modular y visual actual.
+
+🔧 Estructura actual del proyecto
+Uso Firebase Auth (versión 8.10.1)
+
+Los scripts de Firebase están cargados desde CDN directamente en el HTML
+
+firebase-init.js solo contiene la configuración de Firebase (sin document.write)
+
+Uso un sistema de login y logout funcional
+
+Las páginas están protegidas mediante checkAuth.js
+
+El diseño está hecho con Bootstrap 5.3.3 y Font Awesome
+
+Todo el contenido privado está envuelto en un <div id="app" style="display: none;"> que se muestra solo tras confirmar sesión para evitar el parpadeo (flash de contenido no autorizado)
+
+🗂 Estructura de archivos:
+text
+Copiar
+Editar
+📁 js/
+   ├─ firebase-init.js         // inicializa Firebase
+   ├─ checkAuth.js             // redirige si no hay sesión
+   ├─ login.js                 // controla el formulario de login
+   ├─ activate-tab.js          // activa los tabs según URL
+📁 css/
+   └─ styles.css               // estilos personalizados
+index.html                     // panel principal
+proyectos.html                 // otra página protegida
+login.html                     // login con caja centrada
+🔐 Autenticación:
+En checkAuth.js uso:
+
+js
+Copiar
+Editar
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    document.getElementById('app').style.display = 'block';
+  } else {
+    window.location.href = 'login.html';
+  }
+});
+En login.html si el usuario ya está logueado, lo redirijo a index.html.
+
+🎨 Diseño:
+Uso Bootstrap 5.3.3
+
+El layout de las páginas tiene:
+
+Sidebar lateral izquierdo (con offcanvas-md)
+
+Botón hamburguesa visible en móviles
+
+main con margen ms-md-280 para dejar espacio al sidebar
+
+Responsive 100%
+
+El login tiene una tarjeta centrada, con shadow, rounded y tamaño máximo de 380px.
+
+✅ Cosas que ya funcionan:
+Login / logout
+
+Redirección entre páginas protegidas
+
+Sidebar que colapsa en móviles
+
+Activación de la pestaña activa en el menú
+
+Protección visual para evitar que se vea el contenido antes de validar sesión
+
+✅ Cosas que quiero continuar o mejorar:
+Conectar Firestore para mostrar datos reales en el dashboard
+
+Crear más páginas reutilizando el mismo layout
+
+Agregar un loader (opcional) mientras Firebase verifica la sesión
+
+Posiblemente implementar roles o permisos
+
+Agregar feedback visual en login (spinner, errores)
+
+👉 Por favor continúa ayudándome con este proyecto respetando esta estructura modular y enfoque visual. Si necesitas ver el código de algún archivo específico, te lo puedo compartir.
+
