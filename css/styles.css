@@ -17,3 +17,14 @@ body {
   padding: 15px;
   width: 100%;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.ms-280 {
+  margin-left: 280px !important;
+}

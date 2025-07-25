@@ -14,46 +14,44 @@
   <!-- Estilos personalizados -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-  <div class="d-flex">
-    <!-- SIDEBAR -->
-    <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px; height: 100vh;">
-      <a href="index.html" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-        <i class="fas fa-layer-group me-2 fa-lg"></i>
-        <span class="fs-4">Panel</span>
-      </a>
-      <hr>
-      <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item">
-          <a href="index.html" class="nav-link link-body-emphasis">
-            <i class="fas fa-home me-2"></i> Inicio
-          </a>
-        </li>
-        <li>
-          <a href="proyectos.html" class="nav-link">
-            <i class="fas fa-folder-open me-2"></i> Proyectos
-          </a>
-        </li>
-      </ul>
-      <hr>
-      <div class="dropdown">
-        <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-          <strong>Usuario</strong>
+<body class="m-0 p-0">
+  <!-- SIDEBAR FIJO -->
+  <div class="position-fixed top-0 start-0 bg-body-tertiary p-3 d-flex flex-column" style="width: 280px; height: 100vh;">
+    <a href="index.html" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+      <i class="fas fa-layer-group me-2 fa-lg"></i>
+      <span class="fs-4">Panel</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <a href="index.html" class="nav-link">
+          <i class="fas fa-home me-2"></i> Inicio
         </a>
-        <ul class="dropdown-menu text-small shadow">
-          <li><a class="dropdown-item" href="#">Perfil</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i> Cerrar sesión</a></li>
-        </ul>
-      </div>
+      </li>
+      <li>
+        <a href="proyectos.html" class="nav-link link-body-emphasis">
+          <i class="fas fa-folder-open me-2"></i> Proyectos
+        </a>
+      </li>
+    </ul>
+    <hr>
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+        <strong>Usuario</strong>
+      </a>
+      <ul class="dropdown-menu text-small shadow">
+        <li><a class="dropdown-item" href="#">Perfil</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i> Cerrar sesión</a></li>
+      </ul>
     </div>
+  </div>
 
-    <!-- CONTENIDO -->
-    <div class="p-4" style="flex-grow: 1;">
-      <h1 class="mb-4">Gestión de Proyectos</h1>
-      <p>Esta es la sección donde se mostrarán los proyectos activos.</p>
-    </div>
+  <!-- CONTENIDO AJUSTADO -->
+  <div class="ms-280 p-4" style="margin-left: 280px;">
+    <h1 class="mb-4">Bienvenido al panel</h1>
+    <p>Esta es la página de inicio de tu sistema.</p>
   </div>
 
   <!-- Scripts -->
@@ -62,4 +60,5 @@
   <script src="js/checkAuth.js"></script>
   <script src="js/activate-tab.js"></script>
 </body>
+
 </html>
