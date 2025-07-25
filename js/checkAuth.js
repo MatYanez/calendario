@@ -1,26 +1,27 @@
 // js/checkAuth.js
 
 document.addEventListener("DOMContentLoaded", () => {
-  const check = setInterval(() => {
-    if (typeof firebase !== 'undefined' && firebase.auth) {
-      firebase.auth().onAuthStateChanged(function(user) {
-        if (!user) {
-          window.location.href = "login.html";
-        }
-      });
+  const currentPage = window.location.pathname.split("/").pop();
 
-      window.logout = function () {
-        firebase.auth().signOut()
-          .then(() => {
-            window.location.href = "login.html";
-          })
-          .catch((error) => {
-            console.error("Error al cerrar sesión:", error);
-            alert("Error al cerrar sesión.");
-          });
-      };
-
-      clearInterval(check);
+  firebase.auth().onAuthStateChanged(function(user) {
+    // Redirigir solo si NO está en login.html y NO hay sesión
+    if (!user && currentPage !== "login.html") {
+      window.location.href = "login.html";
     }
-  }, 100);
+
+    // Si ya está logueado y está en login.html, redirigir al dashboard
+    if (user && currentPage === "login.html") {
+      window.location.href = "index.html";
+    }
+  });
+
+  // Función logout disponible en cualquier página
+  window.logout = function () {
+    firebase.auth().signOut()
+      .then(() => window.location.href = "login.html")
+      .catch(err => {
+        console.error("Error al cerrar sesión:", err);
+        alert("Error al cerrar sesión.");
+      });
+  };
 });
