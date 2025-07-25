@@ -1,30 +1,14 @@
-/* Estilos base del login Bootstrap (sign-in.css) */
-html, body {
-  height: 100%;
-}
-
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #f8f9fa;
-}
-
-.form-signin {
-  max-width: 330px;
-  padding: 15px;
-  width: 100%;
-}
-
 body {
   margin: 0;
   padding: 0;
-  height: 100vh;
-  overflow: hidden;
 }
 
-.ms-280 {
+.ms-md-280 {
   margin-left: 280px !important;
+}
+
+@media (max-width: 767.98px) {
+  .ms-md-280 {
+    margin-left: 0 !important;
+  }
 }
