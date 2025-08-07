@@ -92,15 +92,14 @@
     <button class="btn btn-outline-secondary" id="btn-volver">
       <i class="fas fa-arrow-left me-2"></i> Atrás
     </button>
-    <h2 id="detalle-nombre" class="mb-0 mx-3"></h2>
+    <h2 id="detalle-tipo" class="mb-0 mx-3"></h2>
   </div>
+
   <div class="row">
-    <!-- Columna de imagen -->
     <div class="col-md-4">
       <img src="https://placehold.co/600x400/EEE/31343C" alt="Imagen del proyecto" class="img-fluid rounded shadow-sm mb-3">
     </div>
 
-    <!-- Columna de información -->
     <div class="col-md-8">
       <div class="d-flex justify-content-between align-items-start mb-2">
         <span id="detalle-categoria" class="badge bg-secondary">Categoría</span>
@@ -109,38 +108,15 @@
         </button>
       </div>
 
-      <h4 id="detalle-tipo" class="text-muted"></h4>
+      <!-- Nombre del proyecto debajo -->
+      <h4 id="detalle-nombre" class="text-muted"></h4>
 
-      <p id="detalle-descripcion">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae orci nec neque...
-      </p>
-
-      <!-- Campos de detalle -->
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label">Propietario</label>
-          <input type="text" class="form-control" id="detalle-propietario" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Estado</label>
-          <input type="text" class="form-control" id="detalle-estado" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">VRA/CAT</label>
-          <input type="text" class="form-control" id="detalle-vra" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Firma SG</label>
-          <input type="text" class="form-control" id="detalle-firma" readonly>
-        </div>
-        <div class="col-12">
-          <label class="form-label">Notas</label>
-          <textarea class="form-control" rows="3" id="detalle-notas" readonly></textarea>
-        </div>
-      </div>
+      <!-- Descripción ficticia -->
+      <p id="detalle-descripcion">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
     </div>
   </div>
 </div>
+
 
 
 
