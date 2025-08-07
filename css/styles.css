@@ -94,3 +94,27 @@ body {
 .card .progress-bar {
   font-weight: 500;
 }
+
+.card {
+  height: 100%;
+  max-height: 360px;
+}
+
+.card-img-top {
+  object-fit: cover;
+  height: 160px;
+}
+.card-body {
+  padding: 0.75rem;
+}
+.card-title {
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+.card-text {
+  font-size: 0.9rem;
+}
+.progress {
+  height: 16px;
+  font-size: 0.75rem;
+}
