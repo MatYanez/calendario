@@ -5,13 +5,19 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     data: [],
     columns: [
-      { data: 'id' },
-      { data: 'nombre' },
-      { data: 'tipo' },
+      { data: 'tipo' },         
+      { data: 'nombre' },        
       { data: 'p0' },
       { data: 'categoria' },
       { data: 'propietario' },
-      { data: 'estado' }
+      { data: 'estado' },
+      { data: 'limiteVRA' },
+      { data: 'vra' },
+      { data: 'limiteFirma' },
+      { data: 'firmaSG' },
+      { data: 'cierre' },
+      { data: 'notas' },
+      { data: 'distribuible' }
     ]
   });
 
