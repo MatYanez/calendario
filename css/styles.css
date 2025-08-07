@@ -85,3 +85,12 @@ body {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+.card .progress {
+  height: 20px;
+  margin-top: 10px;
+}
+
+.card .progress-bar {
+  font-weight: 500;
+}
