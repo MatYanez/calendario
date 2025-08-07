@@ -10,3 +10,6 @@
 };
 
 firebase.initializeApp(firebaseConfig);
+
+// Inicializar Firestore y hacerlo global
+window.db = firebase.firestore();
