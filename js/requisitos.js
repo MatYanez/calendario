@@ -1,3 +1,4 @@
+// 🔁 Registro de proyecto
 document.getElementById("form-proyecto").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -52,21 +53,21 @@ document.getElementById("form-proyecto").addEventListener("submit", function (e)
 
     return nuevoID;
   })
-  .then((nuevoID) => {
-    mostrarNotificacion(`Proyecto registrado con ID #${nuevoID}`, "exito");
-    document.getElementById("form-proyecto").reset();
-    document.getElementById("proyecto-otro").classList.add("d-none");
-    document.getElementById("proyecto-p0-otro").classList.add("d-none");
-    bootstrap.Modal.getInstance(document.getElementById("modalProyecto")).hide();
-    document.activeElement.blur();
-  })
-  .catch((error) => {
-    console.error("Error en la transacción:", error);
-    mostrarNotificacion("Error al guardar el proyecto", "error");
-  });
+    .then((nuevoID) => {
+      mostrarNotificacion(`Proyecto registrado con ID #${nuevoID}`, "exito");
+      document.getElementById("form-proyecto").reset();
+      document.getElementById("proyecto-otro").classList.add("d-none");
+      document.getElementById("proyecto-p0-otro").classList.add("d-none");
+      bootstrap.Modal.getInstance(document.getElementById("modalProyecto")).hide();
+      document.activeElement.blur();
+    })
+    .catch((error) => {
+      console.error("Error en la transacción:", error);
+      mostrarNotificacion("Error al guardar el proyecto", "error");
+    });
 });
 
-
+// 🔁 Render tarjetas de proyectos
 document.addEventListener("DOMContentLoaded", function () {
   const contenedor = document.getElementById("contenedor-proyectos");
 
@@ -75,11 +76,10 @@ document.addEventListener("DOMContentLoaded", function () {
       snapshot.forEach(doc => {
         const data = doc.data();
 
-        // Datos simulados (por ahora)
         const categoria = data.categoria || "Desarrollo";
         const nombre = data.nombre || "Proyecto sin nombre";
         const fondo = data.tipo || "Fondo desconocido";
-        const avance = Math.floor(Math.random() * 100) + 1; // avance simulado
+        const avance = Math.floor(Math.random() * 100) + 1; // Simulado
 
         const badgeClass = {
           "Prioritario": "bg-danger",
@@ -90,27 +90,41 @@ document.addEventListener("DOMContentLoaded", function () {
         const card = document.createElement("div");
         card.className = "col-md-6 col-lg-4 mb-4";
 
-card.innerHTML = `
-  <div class="card shadow-sm h-100" role="button">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <span class="badge ${badgeClass}">${categoria}</span>
-    </div>
-    <img src="https://placehold.co/600x400/EEE/31343C" class="card-img-top" alt="Imagen del proyecto">
-    <div class="card-body">
-      <h5 class="card-title">${nombre}</h5>
-      <p class="card-text text-muted">${fondo}</p>
-      <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: ${avance}%;" aria-valuenow="${avance}" aria-valuemin="0" aria-valuemax="100">${avance}%</div>
-      </div>
-    </div>
-  </div>
-`;
+        card.innerHTML = `
+          <div class="card shadow-sm h-100" role="button">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span class="badge ${badgeClass}">${categoria}</span>
+            </div>
+            <img src="https://placehold.co/600x400/EEE/31343C" class="card-img-top" alt="Imagen del proyecto">
+            <div class="card-body">
+              <h5 class="card-title">${nombre}</h5>
+              <p class="card-text text-muted">${fondo}</p>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: ${avance}%;" aria-valuenow="${avance}" aria-valuemin="0" aria-valuemax="100">${avance}%</div>
+              </div>
+            </div>
+          </div>
+        `;
 
-card.querySelector('.card').addEventListener('click', () => {
-  document.getElementById('contenedor-proyectos').classList.add('d-none');
-  document.getElementById('detalle-nombre').textContent = nombre;
-  document.getElementById('detalle-proyecto').classList.remove('d-none');
-});
+        card.querySelector('.card').addEventListener('click', () => {
+          document.getElementById('contenedor-proyectos').classList.add('d-none');
+          document.getElementById('detalle-proyecto').classList.remove('d-none');
+
+          document.getElementById('detalle-nombre').textContent = nombre;
+          document.getElementById('detalle-tipo').textContent = fondo;
+
+          const badge = document.getElementById('detalle-categoria');
+          badge.textContent = categoria;
+          badge.className = `badge ${badgeClass}`;
+
+          document.getElementById('detalle-propietario').value = data.propietario || '';
+          document.getElementById('detalle-estado').value = data.estado || '';
+          document.getElementById('detalle-vra').value = data.vra || '';
+          document.getElementById('detalle-firma').value = data.firmaSG || '';
+          document.getElementById('detalle-notas').value = data.notas || '';
+
+          document.getElementById('detalle-proyecto').dataset.id = doc.id;
+        });
 
         contenedor.appendChild(card);
       });
@@ -121,11 +135,31 @@ card.querySelector('.card').addEventListener('click', () => {
     });
 });
 
-
+// 🔁 Botón ATRÁS
 document.getElementById('btn-volver').addEventListener('click', () => {
   document.getElementById('detalle-proyecto').classList.add('d-none');
   document.getElementById('contenedor-proyectos').classList.remove('d-none');
 });
 
+// ✏️ Botón EDITAR campos
+document.getElementById('btn-editar').addEventListener('click', () => {
+  const campos = [
+    'detalle-propietario',
+    'detalle-estado',
+    'detalle-vra',
+    'detalle-firma',
+    'detalle-notas'
+  ];
 
-//v1.2
+  campos.forEach(id => {
+    const el = document.getElementById(id);
+    el.toggleAttribute('readonly');
+    el.classList.toggle('bg-light');
+  });
+
+  mostrarNotificacion("Modo edición activado (aún no guarda)", "alerta");
+});
+
+
+
+//v1.3
