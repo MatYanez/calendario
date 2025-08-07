@@ -73,7 +73,135 @@
     <!-- CONTENIDO PRINCIPAL -->
     <main class="p-4 w-100" style="min-height: 100vh;">
       <h1 class="mb-4">Requisitos</h1>
-      <p>Aquí va un listado de proyectos con sus requisitos</p>
+<!-- BOTÓN AGREGAR PROYECTO -->
+<div class="d-flex justify-content-end my-3">
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalProyecto">
+    <i class="fas fa-plus me-1"></i> Agregar Proyecto
+  </button>
+</div>
+
+<!-- MODAL PARA INGRESAR PROYECTO -->
+<div class="modal fade" id="modalProyecto" tabindex="-1" aria-labelledby="modalProyectoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <form id="form-proyecto">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalProyectoLabel">Nuevo Proyecto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+
+            <!-- Proyecto -->
+            <div class="col-md-6">
+              <label class="form-label">Proyecto *</label>
+              <select class="form-select" id="proyecto-tipo">
+                <option value="">Seleccionar</option>
+                <option value="ANID">ANID</option>
+                <option value="FONDART">FONDART</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <input type="text" class="form-control mt-2 d-none" id="proyecto-otro" placeholder="Especificar otro">
+            </div>
+
+            <!-- Nombre de Proyecto -->
+            <div class="col-md-6">
+              <label class="form-label">Nombre de Proyecto *</label>
+              <input type="text" class="form-control" id="proyecto-nombre" required>
+            </div>
+
+            <!-- P0 -->
+            <div class="col-md-6">
+              <label class="form-label">P0</label>
+              <select class="form-select" id="proyecto-p0">
+                <option value="">Seleccionar</option>
+                <option value="P0">P0</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <input type="text" class="form-control mt-2 d-none" id="proyecto-p0-otro" placeholder="Especificar otro">
+            </div>
+
+            <!-- Categorización -->
+            <div class="col-md-6">
+              <label class="form-label">Categorización</label>
+              <select class="form-select" id="proyecto-categoria">
+                <option value="">Seleccionar</option>
+                <option value="Prioritario">Prioritario</option>
+                <option value="Asociados">Asociados</option>
+                <option value="Desarrollo">Desarrollo</option>
+              </select>
+            </div>
+
+            <!-- Propietario -->
+            <div class="col-md-6">
+              <label class="form-label">Propietario</label>
+              <input type="text" class="form-control" id="proyecto-propietario">
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-6">
+              <label class="form-label">Estado</label>
+              <input type="text" class="form-control" id="proyecto-estado">
+            </div>
+
+            <!-- Limite VRA/CAT -->
+            <div class="col-md-6">
+              <label class="form-label">Límite VRA/CAT</label>
+              <input type="date" class="form-control" id="proyecto-limite-vra">
+            </div>
+
+            <!-- VRA/CAT -->
+            <div class="col-md-6">
+              <label class="form-label">VRA/CAT</label>
+              <input type="text" class="form-control" id="proyecto-vra">
+            </div>
+
+            <!-- Límite Firma -->
+            <div class="col-md-6">
+              <label class="form-label">Límite Firma</label>
+              <input type="date" class="form-control" id="proyecto-limite-firma">
+            </div>
+
+            <!-- Firma SG -->
+            <div class="col-md-6">
+              <label class="form-label">Firma SG</label>
+              <select class="form-select" id="proyecto-firma-sg">
+                <option value="">Seleccionar</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Etapa de formulación">Etapa de formulación</option>
+              </select>
+            </div>
+
+            <!-- Fecha de cierre -->
+            <div class="col-md-6">
+              <label class="form-label">Fecha de cierre</label>
+              <input type="date" class="form-control" id="proyecto-cierre">
+            </div>
+
+            <!-- Notas -->
+            <div class="col-md-6">
+              <label class="form-label">Notas</label>
+              <textarea class="form-control" rows="2" id="proyecto-notas"></textarea>
+            </div>
+
+            <!-- Distribuible -->
+            <div class="col-md-6">
+              <label class="form-label">Distribuible</label>
+              <input type="text" class="form-control" id="proyecto-distribuible">
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-check me-1"></i> Ingresar Proyecto
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
     </main>
   </div>
 
@@ -85,5 +213,6 @@
   <script src="js/firebase-init.js"></script>
   <script src="js/checkAuth.js"></script>
   <script src="js/activate-tab.js"></script>
+  <script src="js/proyectos.js"></script>
 </body>
 </html>
