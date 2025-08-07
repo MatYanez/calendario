@@ -50,6 +50,7 @@ document.getElementById("form-proyecto").addEventListener("submit", function (e)
       document.getElementById("proyecto-otro").classList.add("d-none");
       document.getElementById("proyecto-p0-otro").classList.add("d-none");
       bootstrap.Modal.getInstance(document.getElementById("modalProyecto")).hide();
+      document.activeElement.blur(); // Quita el foco del botón
     })
     .catch(err => {
       console.error("Error al guardar:", err);
