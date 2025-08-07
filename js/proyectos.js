@@ -17,10 +17,10 @@ document.getElementById("form-proyecto").addEventListener("submit", function (e)
 
   const nombre = document.getElementById("proyecto-nombre").value;
 
-  if (!tipo || !nombre) {
-    alert("Los campos Proyecto y Nombre de proyecto son obligatorios.");
-    return;
-  }
+if (!tipo || !nombre) {
+  mostrarNotificacion("Los campos Proyecto y Nombre de proyecto son obligatorios.", "error");
+  return;
+}
 
   const p0 = document.getElementById("proyecto-p0").value === "Otro"
     ? document.getElementById("proyecto-p0-otro").value
@@ -44,16 +44,16 @@ document.getElementById("form-proyecto").addEventListener("submit", function (e)
   };
 
   db.collection("proyectos").add(proyecto)
-    .then(() => {
-      alert("Proyecto registrado correctamente.");
+.then(() => {
+  mostrarNotificacion("Proyecto registrado correctamente.", "exito");
       document.getElementById("form-proyecto").reset();
       document.getElementById("proyecto-otro").classList.add("d-none");
       document.getElementById("proyecto-p0-otro").classList.add("d-none");
       bootstrap.Modal.getInstance(document.getElementById("modalProyecto")).hide();
       document.activeElement.blur(); // Quita el foco del botón
     })
-    .catch(err => {
-      console.error("Error al guardar:", err);
-      alert("Error al guardar el proyecto.");
-    });
+.catch(err => {
+  console.error("Error al guardar:", err);
+  mostrarNotificacion("Error al guardar el proyecto.", "error");
+});
 });
