@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="card-header d-flex justify-content-between align-items-center">
               <span class="badge ${badgeClass}">${categoria}</span>
             </div>
-            <img src="https://via.placeholder.com/600x300.png?text=Proyecto" class="card-img-top" alt="Imagen del proyecto">
+            <img src="https://placehold.co/600x400/EEE/31343C" class="card-img-top" alt="Imagen del proyecto">
             <div class="card-body">
               <h5 class="card-title">${nombre}</h5>
               <p class="card-text text-muted">${fondo}</p>
