@@ -90,21 +90,27 @@ document.addEventListener("DOMContentLoaded", function () {
         const card = document.createElement("div");
         card.className = "col-md-6 col-lg-4 mb-4";
 
-        card.innerHTML = `
-          <div class="card shadow-sm h-100">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span class="badge ${badgeClass}">${categoria}</span>
-            </div>
-            <img src="https://placehold.co/600x400/EEE/31343C" class="card-img-top" alt="Imagen del proyecto">
-            <div class="card-body">
-              <h5 class="card-title">${nombre}</h5>
-              <p class="card-text text-muted">${fondo}</p>
-              <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: ${avance}%;" aria-valuenow="${avance}" aria-valuemin="0" aria-valuemax="100">${avance}%</div>
-              </div>
-            </div>
-          </div>
-        `;
+card.innerHTML = `
+  <div class="card shadow-sm h-100" role="button">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span class="badge ${badgeClass}">${categoria}</span>
+    </div>
+    <img src="https://placehold.co/600x400/EEE/31343C" class="card-img-top" alt="Imagen del proyecto">
+    <div class="card-body">
+      <h5 class="card-title">${nombre}</h5>
+      <p class="card-text text-muted">${fondo}</p>
+      <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width: ${avance}%;" aria-valuenow="${avance}" aria-valuemin="0" aria-valuemax="100">${avance}%</div>
+      </div>
+    </div>
+  </div>
+`;
+
+card.querySelector('.card').addEventListener('click', () => {
+  document.getElementById('contenedor-proyectos').classList.add('d-none');
+  document.getElementById('detalle-nombre').textContent = nombre;
+  document.getElementById('detalle-proyecto').classList.remove('d-none');
+});
 
         contenedor.appendChild(card);
       });
@@ -116,4 +122,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-//v1.1
+document.getElementById('btn-volver').addEventListener('click', () => {
+  document.getElementById('detalle-proyecto').classList.add('d-none');
+  document.getElementById('contenedor-proyectos').classList.remove('d-none');
+});
+
+
+//v1.2
