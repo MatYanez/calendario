@@ -12,3 +12,9 @@ body {
     margin-left: 0 !important;
   }
 }
+
+.nav-link {
+    display: block;
+    color: #323232;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
