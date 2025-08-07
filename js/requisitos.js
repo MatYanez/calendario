@@ -66,4 +66,54 @@ document.getElementById("form-proyecto").addEventListener("submit", function (e)
   });
 });
 
-//v1
+
+document.addEventListener("DOMContentLoaded", function () {
+  const contenedor = document.getElementById("contenedor-proyectos");
+
+  db.collection("proyectos").orderBy("id").get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        const data = doc.data();
+
+        // Datos simulados (por ahora)
+        const categoria = data.categoria || "Desarrollo";
+        const nombre = data.nombre || "Proyecto sin nombre";
+        const fondo = data.tipo || "Fondo desconocido";
+        const avance = Math.floor(Math.random() * 100) + 1; // avance simulado
+
+        const badgeClass = {
+          "Prioritario": "bg-danger",
+          "Asociados": "bg-warning text-dark",
+          "Desarrollo": "bg-secondary"
+        }[categoria] || "bg-secondary";
+
+        const card = document.createElement("div");
+        card.className = "col-md-6 col-lg-4 mb-4";
+
+        card.innerHTML = `
+          <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span class="badge ${badgeClass}">${categoria}</span>
+            </div>
+            <img src="https://via.placeholder.com/600x300.png?text=Proyecto" class="card-img-top" alt="Imagen del proyecto">
+            <div class="card-body">
+              <h5 class="card-title">${nombre}</h5>
+              <p class="card-text text-muted">${fondo}</p>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: ${avance}%;" aria-valuenow="${avance}" aria-valuemin="0" aria-valuemax="100">${avance}%</div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        contenedor.appendChild(card);
+      });
+    })
+    .catch(error => {
+      console.error("Error al cargar tarjetas:", error);
+      mostrarNotificacion("Error al cargar proyectos", "error");
+    });
+});
+
+
+//v1.1
