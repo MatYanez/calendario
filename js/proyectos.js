@@ -1,13 +1,3 @@
-// Mostrar inputs "otro" si se selecciona esa opción
-document.getElementById("proyecto-tipo").addEventListener("change", function () {
-  document.getElementById("proyecto-otro").classList.toggle("d-none", this.value !== "Otro");
-});
-
-document.getElementById("proyecto-p0").addEventListener("change", function () {
-  document.getElementById("proyecto-p0-otro").classList.toggle("d-none", this.value !== "Otro");
-});
-
-// Guardar proyecto
 document.getElementById("form-proyecto").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -17,16 +7,16 @@ document.getElementById("form-proyecto").addEventListener("submit", function (e)
 
   const nombre = document.getElementById("proyecto-nombre").value;
 
-if (!tipo || !nombre) {
-  mostrarNotificacion("Los campos Proyecto y Nombre de proyecto son obligatorios.", "error");
-  return;
-}
+  if (!tipo || !nombre) {
+    mostrarNotificacion("Los campos Proyecto y Nombre de proyecto son obligatorios.", "error");
+    return;
+  }
 
   const p0 = document.getElementById("proyecto-p0").value === "Otro"
     ? document.getElementById("proyecto-p0-otro").value
     : document.getElementById("proyecto-p0").value;
 
-  const proyecto = {
+  const proyectoData = {
     tipo,
     nombre,
     p0,
@@ -43,17 +33,37 @@ if (!tipo || !nombre) {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  db.collection("proyectos").add(proyecto)
-.then(() => {
-  mostrarNotificacion("Proyecto registrado correctamente.", "exito");
-      document.getElementById("form-proyecto").reset();
-      document.getElementById("proyecto-otro").classList.add("d-none");
-      document.getElementById("proyecto-p0-otro").classList.add("d-none");
-      bootstrap.Modal.getInstance(document.getElementById("modalProyecto")).hide();
-      document.activeElement.blur(); // Quita el foco del botón
-    })
-.catch(err => {
-  console.error("Error al guardar:", err);
-  mostrarNotificacion("Error al guardar el proyecto.", "error");
+  const contadorRef = db.collection("config").doc("contadorProyectos");
+
+  db.runTransaction(async (transaction) => {
+    const contadorDoc = await transaction.get(contadorRef);
+    let nuevoID = 1;
+
+    if (contadorDoc.exists) {
+      nuevoID = contadorDoc.data().valor + 1;
+    }
+
+    transaction.set(contadorRef, { valor: nuevoID });
+    const proyectoRef = db.collection("proyectos").doc(nuevoID.toString());
+    transaction.set(proyectoRef, {
+      id: nuevoID,
+      ...proyectoData
+    });
+
+    return nuevoID;
+  })
+  .then((nuevoID) => {
+    mostrarNotificacion(`Proyecto registrado con ID #${nuevoID}`, "exito");
+    document.getElementById("form-proyecto").reset();
+    document.getElementById("proyecto-otro").classList.add("d-none");
+    document.getElementById("proyecto-p0-otro").classList.add("d-none");
+    bootstrap.Modal.getInstance(document.getElementById("modalProyecto")).hide();
+    document.activeElement.blur();
+  })
+  .catch((error) => {
+    console.error("Error en la transacción:", error);
+    mostrarNotificacion("Error al guardar el proyecto", "error");
+  });
 });
-});
+
+//v1
