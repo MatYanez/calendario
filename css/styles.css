@@ -18,3 +18,7 @@ body {
     color: #323232;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
 }
+
+.bg-body-tertiary {
+    background-color: rgb(243 243 243) !important;
+}
