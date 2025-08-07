@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const categoria = data.categoria || "Desarrollo";
         const nombre = data.nombre || "Proyecto sin nombre";
         const fondo = data.tipo || "Fondo desconocido";
-        const avance = Math.floor(Math.random() * 100) + 1; // Simulado
+        const avance = Math.floor(Math.random() * 100) + 1;
 
         const badgeClass = {
           "Prioritario": "bg-danger",
@@ -117,13 +117,8 @@ document.addEventListener("DOMContentLoaded", function () {
           badge.textContent = categoria;
           badge.className = `badge ${badgeClass}`;
 
-          document.getElementById('detalle-propietario').value = data.propietario || '';
-          document.getElementById('detalle-estado').value = data.estado || '';
-          document.getElementById('detalle-vra').value = data.vra || '';
-          document.getElementById('detalle-firma').value = data.firmaSG || '';
-          document.getElementById('detalle-notas').value = data.notas || '';
-
           document.getElementById('detalle-proyecto').dataset.id = doc.id;
+          document.getElementById('detalle-proyecto').dataset.info = JSON.stringify(data);
         });
 
         contenedor.appendChild(card);
@@ -141,25 +136,36 @@ document.getElementById('btn-volver').addEventListener('click', () => {
   document.getElementById('contenedor-proyectos').classList.remove('d-none');
 });
 
-// ✏️ Botón EDITAR campos
+// ✏️ Botón EDITAR: abre modal con datos precargados
 document.getElementById('btn-editar').addEventListener('click', () => {
-  const campos = [
-    'detalle-propietario',
-    'detalle-estado',
-    'detalle-vra',
-    'detalle-firma',
-    'detalle-notas'
-  ];
+  const id = document.getElementById('detalle-proyecto').dataset.id;
+  const data = JSON.parse(document.getElementById('detalle-proyecto').dataset.info);
 
-  campos.forEach(id => {
-    const el = document.getElementById(id);
-    el.toggleAttribute('readonly');
-    el.classList.toggle('bg-light');
-  });
+  // Prellenar campos del modal
+  document.getElementById("proyecto-tipo").value = ["ANID", "FONDART"].includes(data.tipo) ? data.tipo : "Otro";
+  document.getElementById("proyecto-otro").value = ["ANID", "FONDART"].includes(data.tipo) ? "" : data.tipo;
+  document.getElementById("proyecto-otro").classList.toggle("d-none", data.tipo === "ANID" || data.tipo === "FONDART");
 
-  mostrarNotificacion("Modo edición activado (aún no guarda)", "alerta");
+  document.getElementById("proyecto-nombre").value = data.nombre || "";
+  document.getElementById("proyecto-p0").value = data.p0 === "P0" ? "P0" : "Otro";
+  document.getElementById("proyecto-p0-otro").value = data.p0 === "P0" ? "" : data.p0 || "";
+  document.getElementById("proyecto-p0-otro").classList.toggle("d-none", data.p0 === "P0");
+
+  document.getElementById("proyecto-categoria").value = data.categoria || "";
+  document.getElementById("proyecto-propietario").value = data.propietario || "";
+  document.getElementById("proyecto-estado").value = data.estado || "";
+  document.getElementById("proyecto-limite-vra").value = data.limiteVRA || "";
+  document.getElementById("proyecto-vra").value = data.vra || "";
+  document.getElementById("proyecto-limite-firma").value = data.limiteFirma || "";
+  document.getElementById("proyecto-firma-sg").value = data.firmaSG || "";
+  document.getElementById("proyecto-cierre").value = data.cierre || "";
+  document.getElementById("proyecto-notas").value = data.notas || "";
+  document.getElementById("proyecto-distribuible").value = data.distribuible || "";
+
+  const modal = new bootstrap.Modal(document.getElementById('modalProyecto'));
+  modal.show();
+
+  mostrarNotificacion("Editando proyecto. No olvides guardar", "alerta");
 });
 
-
-
-//v1.3
+//v1.4
