@@ -41,18 +41,13 @@
             </a>
           </li>
           <li>
-            <a href="proyectos.html" class="nav-link">
-              <i class="fas fa-folder-open me-2"></i> Proyectos
-            </a>
-          </li>
-                              <li>
-            <a href="calendario.html" class="nav-link">
-              <i class="fas fa-calendar me-2"></i> Calendario
+            <a href="checklist.html" class="nav-link">
+              <i class="fas fa-folder-open me-2"></i> Checklist
             </a>
           </li>
                     <li>
-            <a href="requisitos.html" class="nav-link">
-              <i class="fas fa-file me-2"></i> Requisitos
+            <a href="proyectos.html" class="nav-link">
+              <i class="fas fa-file me-2"></i> Proyectos
             </a>
           </li>
         </ul>
@@ -73,36 +68,181 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="p-4 w-100" style="min-height: 100vh;">
-      <h1 class="mb-4">Proyectos</h1>
-<div class="table-responsive mt-4">
-  <table id="tabla-proyectos" class="table table-striped table-bordered">
-    <thead class="table-light">
-      <tr>
-        <th>Proyecto</th>               
-        <th>Nombre del Proyecto</th>   
-        <th>P0</th>
-        <th>Categorización</th>
-        <th>Propietario</th>
-        <th>Estado</th>
-        <th>Límite VRA/CAT</th>
-        <th>VRA/CAT</th>
-        <th>Límite firma</th>
-        <th>Firma SG</th>
-        <th>Fecha de cierre</th>
-        <th>Notas</th>
-        <th>Distribuible</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- JS lo rellenará -->
-    </tbody>
-  </table>
+      <h1 class="mb-4">Requisitos</h1>
+<!-- BOTÓN AGREGAR PROYECTO -->
+<div class="d-flex justify-content-end my-3">
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalProyecto">
+    <i class="fas fa-plus me-1"></i> Agregar Proyecto
+  </button>
 </div>
 
+<!-- Contenedor para las tarjetas de proyectos -->
+<div class="row g-5" id="contenedor-proyectos">
+  <!-- Las cards se insertan aquí desde JS -->
+</div>
+
+<!-- Vista de detalle del proyecto -->
+<div id="detalle-proyecto" class="d-none">
+  <div class="d-flex align-items-center mb-3">
+    <button class="btn btn-outline-secondary" id="btn-volver">
+      <i class="fas fa-arrow-left me-2"></i> Atrás
+    </button>
+    <h2 id="detalle-tipo" class="mb-0 mx-3"></h2>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <img src="https://placehold.co/600x400/EEE/31343C" alt="Imagen del proyecto" class="img-fluid rounded shadow-sm mb-3">
+    </div>
+
+    <div class="col-md-8">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <span id="detalle-categoria" class="badge bg-secondary">Categoría</span>
+        <button class="btn btn-sm btn-outline-primary" id="btn-editar">
+          <i class="fas fa-pen me-1"></i> Editar
+        </button>
+      </div>
+
+      <!-- Nombre del proyecto debajo -->
+      <h4 id="detalle-nombre" class="text-muted"></h4>
+
+      <!-- Descripción ficticia -->
+      <p id="detalle-descripcion">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- MODAL PARA INGRESAR PROYECTO -->
+<div class="modal fade" id="modalProyecto" tabindex="-1" aria-labelledby="modalProyectoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <form id="form-proyecto">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalProyectoLabel">Nuevo Proyecto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+
+
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+
+            <!-- Proyecto -->
+            <div class="col-md-6">
+              <label class="form-label">Proyecto *</label>
+              <select class="form-select" id="proyecto-tipo">
+                <option value="">Seleccionar</option>
+                <option value="ANID">ANID</option>
+                <option value="FONDART">FONDART</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <input type="text" class="form-control mt-2 d-none" id="proyecto-otro" placeholder="Especificar otro">
+            </div>
+
+            <!-- Nombre de Proyecto -->
+            <div class="col-md-6">
+              <label class="form-label">Nombre de Proyecto *</label>
+              <input type="text" class="form-control" id="proyecto-nombre" required>
+            </div>
+
+            <!-- P0 -->
+            <div class="col-md-6">
+              <label class="form-label">P0</label>
+              <select class="form-select" id="proyecto-p0">
+                <option value="">Seleccionar</option>
+                <option value="P0">P0</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <input type="text" class="form-control mt-2 d-none" id="proyecto-p0-otro" placeholder="Especificar otro">
+            </div>
+
+            <!-- Categorización -->
+            <div class="col-md-6">
+              <label class="form-label">Categorización</label>
+              <select class="form-select" id="proyecto-categoria">
+                <option value="">Seleccionar</option>
+                <option value="Prioritario">Prioritario</option>
+                <option value="Asociados">Asociados</option>
+                <option value="Desarrollo">Desarrollo</option>
+              </select>
+            </div>
+
+            <!-- Propietario -->
+            <div class="col-md-6">
+              <label class="form-label">Propietario</label>
+              <input type="text" class="form-control" id="proyecto-propietario">
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-6">
+              <label class="form-label">Estado</label>
+              <input type="text" class="form-control" id="proyecto-estado">
+            </div>
+
+            <!-- Limite VRA/CAT -->
+            <div class="col-md-6">
+              <label class="form-label">Límite VRA/CAT</label>
+              <input type="date" class="form-control" id="proyecto-limite-vra">
+            </div>
+
+            <!-- VRA/CAT -->
+            <div class="col-md-6">
+              <label class="form-label">VRA/CAT</label>
+              <input type="text" class="form-control" id="proyecto-vra">
+            </div>
+
+            <!-- Límite Firma -->
+            <div class="col-md-6">
+              <label class="form-label">Límite Firma</label>
+              <input type="date" class="form-control" id="proyecto-limite-firma">
+            </div>
+
+            <!-- Firma SG -->
+            <div class="col-md-6">
+              <label class="form-label">Firma SG</label>
+              <select class="form-select" id="proyecto-firma-sg">
+                <option value="">Seleccionar</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Etapa de formulación">Etapa de formulación</option>
+              </select>
+            </div>
+
+            <!-- Fecha de cierre -->
+            <div class="col-md-6">
+              <label class="form-label">Fecha de cierre</label>
+              <input type="date" class="form-control" id="proyecto-cierre">
+            </div>
+
+            <!-- Notas -->
+            <div class="col-md-6">
+              <label class="form-label">Notas</label>
+              <textarea class="form-control" rows="2" id="proyecto-notas"></textarea>
+            </div>
+
+            <!-- Distribuible -->
+            <div class="col-md-6">
+              <label class="form-label">Distribuible</label>
+              <input type="text" class="form-control" id="proyecto-distribuible">
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-check me-1"></i> Ingresar Proyecto
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
     </main>
   </div>
 
+   
 <!-- jQuery  -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
@@ -122,6 +262,6 @@
 <script src="js/firebase-init.js"></script>
 <script src="js/checkAuth.js"></script>
 <script src="js/notificaciones.js"></script>
-<script src="js/proyectos.js"></script>
+<script src="js/requisitos.js"></script>
 </body>
 </html>
