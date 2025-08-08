@@ -95,13 +95,9 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="card-header d-flex justify-content-between align-items-center">
               <span class="badge ${badgeClass}">${categoria}</span>
             </div>
-            <img src="https://placehold.co/600x400/EEE/31343C" class="card-img-top" alt="Imagen del proyecto">
             <div class="card-body">
               <h5 class="card-title">${nombre}</h5>
               <p class="card-text text-muted">${fondo}</p>
-              <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: ${avance}%;" aria-valuenow="${avance}" aria-valuemin="0" aria-valuemax="100">${avance}%</div>
-              </div>
             </div>
           </div>
         `;
@@ -168,4 +164,4 @@ document.getElementById('btn-editar').addEventListener('click', () => {
   mostrarNotificacion("Editando proyecto. No olvides guardar", "alerta");
 });
 
-//v1.4
+//v1.5
