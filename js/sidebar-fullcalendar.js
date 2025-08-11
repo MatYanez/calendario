@@ -72,15 +72,12 @@
             for (let y = yStart; y <= yEnd; y++) {
               feriados.push(...(window.__feriadosCL[y] || []));
             }
-
-            const events = feriados.map(h => ({
-              title: h.localName || h.name, // quita esta línea si no quieres tooltip
-              start: h.date,                // YYYY-MM-DD
-              allDay: true,
-              display: 'background',
-              color: 'rgba(220,53,69,0.18)' // rojo suave (Bootstrap danger)
-            }));
-
+const events = feriados.map(h => ({
+  start: h.date,          // ← sin title
+  allDay: true,
+  display: 'background',
+  color: 'rgba(220,53,69,0.18)' // rojo suave para el día feriado
+}));
             success(events);
           } catch (err) {
             console.error(err);
@@ -141,4 +138,4 @@
 })();
 
 
-///v.1.1
+///v.1.2
