@@ -137,3 +137,7 @@ a{
   text-decoration: none;
   color: #323232;
 }
+
+#sidebarCalendar .fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
+    min-height: 0!important;
+}
