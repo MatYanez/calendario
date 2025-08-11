@@ -76,7 +76,7 @@ const events = feriados.map(h => ({
   start: h.date,          // ← sin title
   allDay: true,
   display: 'background',
-  color: 'rgba(220,53,69,0.18)' // rojo suave para el día feriado
+  color: 'rgba(220, 53, 70, 0.5)' // rojo suave para el día feriado
 }));
             success(events);
           } catch (err) {
@@ -138,4 +138,4 @@ const events = feriados.map(h => ({
 })();
 
 
-///v.1.2
+///v1.3
