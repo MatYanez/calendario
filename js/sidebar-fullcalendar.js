@@ -1,22 +1,37 @@
 // js/sidebar-fullcalendar.js
+// Requiere: Bootstrap (bundle), FullCalendar global build:
+// <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
+// <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.19/locales/es.global.min.js"></script>
+
 (function () {
-  const PANEL_ID = 'sidebarCalendarPanel';
-  const CAL_ID = 'sidebarCalendar';
-  const BTN_ID = 'btnToggleSidebarCalendar';
+  const PANEL_ID   = 'sidebarCalendarPanel';
+  const CAL_ID     = 'sidebarCalendar';
+  const BTN_ID     = 'btnToggleSidebarCalendar';
   const CHEVRON_ID = 'sidebarCalendarChevron';
-  const OFFCANVAS_ID = 'sidebarMenu'; // si tu sidebar tiene otro id, cámbialo aquí
-  const LS_KEY = 'sidebarCalendarOpen';
+  const OFFCANVAS_ID = 'sidebarMenu';    // cambia si tu offcanvas tiene otro id
+  const LS_KEY     = 'sidebarCalendarOpen';
 
   let calendar = null;
   let bsCollapse = null;
 
   function el(id) { return document.getElementById(id); }
-
   function setChevron(open) {
     const chev = el(CHEVRON_ID);
     if (!chev) return;
     chev.classList.toggle('fa-chevron-down', !open);
     chev.classList.toggle('fa-chevron-up', open);
+  }
+
+  // Carga feriados de Chile por año (con cache simple en window)
+  async function fetchFeriadosChile(year) {
+    try {
+      const res = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/CL`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } catch (e) {
+      console.error('Error al cargar feriados CL', e);
+      return [];
+    }
   }
 
   function ensureCalendar() {
@@ -83,21 +98,17 @@
     const btn = el(BTN_ID);
     if (!panel || !btn) return;
 
-    // Collapse manual (sin auto toggle on load)
     bsCollapse = new bootstrap.Collapse(panel, { toggle: false });
 
-    // Restaurar estado
     const open = localStorage.getItem(LS_KEY) === '1';
     if (open) {
       bsCollapse.show();
       setChevron(true);
-      // Espera al fin de la animación para render seguro
       panel.addEventListener('shown.bs.collapse', ensureCalendar, { once: true });
     } else {
       setChevron(false);
     }
 
-    // Toggle
     btn.addEventListener('click', () => {
       const isShown = panel.classList.contains('show');
       if (isShown) {
@@ -111,11 +122,10 @@
       }
     });
 
-    // Render al terminar de abrir
     panel.addEventListener('shown.bs.collapse', ensureCalendar);
 
-    // En móviles: cuando abras el offcanvas, recalcula tamaños
-    const offcanvasEl = document.getElementById(OFFCANVAS_ID);
+    // En móviles: si usas offcanvas, recalcula tamaños al mostrarse
+    const offcanvasEl = el(OFFCANVAS_ID);
     if (offcanvasEl) {
       offcanvasEl.addEventListener('shown.bs.offcanvas', () => {
         if (panel.classList.contains('show') && calendar) {
@@ -129,3 +139,6 @@
     ? document.addEventListener('DOMContentLoaded', init)
     : init();
 })();
+
+
+//v1
