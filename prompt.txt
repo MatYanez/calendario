@@ -1,86 +1,91 @@
-✅ PROMPT COMPLETO PARA CONTINUAR MI PROYECTO WEB
-Hola, estoy desarrollando una aplicación web con autenticación usando Firebase, Bootstrap y JavaScript puro. Ya tengo bastante avanzado, pero quiero continuar el proyecto manteniendo la estructura modular y visual actual.
+📌 PROYECTO WEB – CALENDARIO DE PROYECTOS
 
-🔧 Estructura actual del proyecto
-Uso Firebase Auth (versión 8.10.1)
+🕒 Fecha de generación: [Actualiza cuando lo uses]
 
-Los scripts de Firebase están cargados desde CDN directamente en el HTML
+────────────────────────────────────────────
+🔧 TECNOLOGÍAS UTILIZADAS:
+────────────────────────────────────────────
+- Firebase Auth y Firestore (versión 8.10.1)
+- JavaScript puro (sin frameworks)
+- Bootstrap 5.3.3
+- Font Awesome 6.5.0
+- DataTables para visualización tabular
+- Sistema de notificaciones personalizado tipo Toast
+- Estructura modular por archivos JS
 
-firebase-init.js solo contiene la configuración de Firebase (sin document.write)
-
-Uso un sistema de login y logout funcional
-
-Las páginas están protegidas mediante checkAuth.js
-
-El diseño está hecho con Bootstrap 5.3.3 y Font Awesome
-
-Todo el contenido privado está envuelto en un <div id="app" style="display: none;"> que se muestra solo tras confirmar sesión para evitar el parpadeo (flash de contenido no autorizado)
-
-🗂 Estructura de archivos:
-text
-Copiar
-Editar
+────────────────────────────────────────────
+📁 ESTRUCTURA DE ARCHIVOS:
+────────────────────────────────────────────
 📁 js/
    ├─ firebase-init.js         // inicializa Firebase
    ├─ checkAuth.js             // redirige si no hay sesión
    ├─ login.js                 // controla el formulario de login
    ├─ activate-tab.js          // activa los tabs según URL
+   ├─ requisitos.js            // lógica de registro, listado y detalle de proyectos
+   ├─ proyectos.js             // tabla con todos los proyectos (DataTables)
+   ├─ notificaciones.js        // función mostrarNotificacion()
+
 📁 css/
    └─ styles.css               // estilos personalizados
-index.html                     // panel principal
-proyectos.html                 // otra página protegida
-login.html                     // login con caja centrada
-🔐 Autenticación:
-En checkAuth.js uso:
 
-js
-Copiar
-Editar
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    document.getElementById('app').style.display = 'block';
-  } else {
-    window.location.href = 'login.html';
-  }
-});
-En login.html si el usuario ya está logueado, lo redirijo a index.html.
+📄 login.html                  // login con tarjeta centrada
+📄 index.html                  // dashboard principal
+📄 requisitos.html             // donde se agregan proyectos (con cards)
+📄 proyectos.html              // listado completo de proyectos en tabla
 
-🎨 Diseño:
-Uso Bootstrap 5.3.3
+────────────────────────────────────────────
+✅ FUNCIONALIDADES YA IMPLEMENTADAS:
+────────────────────────────────────────────
+✔ Login y logout con Firebase Auth
+✔ Protección de páginas mediante checkAuth.js
+✔ Escondido de contenido con <div id="app"> hasta validar sesión
+✔ Registro de proyecto con validación de campos obligatorios
+✔ Guardado en Firestore con ID correlativo (usando transacción)
+✔ Listado de proyectos como tarjetas en requisitos.html
+✔ Listado de proyectos como tabla (DataTables) en proyectos.html
+✔ Detalle de proyecto al hacer clic en una card
+✔ Botón atrás desde el detalle
+✔ Modal que se llena con los datos al presionar “Editar” en el detalle
+✔ Sistema de notificaciones visuales con íconos
+✔ Responsive completo (sidebar, tarjetas, formularios, etc.)
 
-El layout de las páginas tiene:
+────────────────────────────────────────────
+🧱 CAMPOS DEL PROYECTO (Firestore):
+────────────────────────────────────────────
+- tipo              (select: ANID, FONDART u otro personalizado)
+- nombre            (texto obligatorio)
+- p0                (P0 o personalizado)
+- categoria         (Prioritario, Asociados, Desarrollo)
+- propietario       (texto)
+- estado            (texto)
+- limiteVRA         (fecha)
+- vra               (texto)
+- limiteFirma       (fecha)
+- firmaSG           (select: Pendiente, Etapa de formulación)
+- cierre            (fecha)
+- notas             (texto)
+- distribuible      (texto)
+- timestamp         (fecha de creación)
+- id                (correlativo)
 
-Sidebar lateral izquierdo (con offcanvas-md)
+────────────────────────────────────────────
+🧪 COSAS PENDIENTES O EN PROCESO:
+────────────────────────────────────────────
+🔄 Agregar modo edición completo que guarde los cambios en Firestore
+📤 Permitir eliminar proyectos (opcional)
+📊 Mostrar progreso real (de momento es aleatorio)
+🖼 Posibilidad de subir imágenes reales por proyecto
+🔐 Roles o permisos según tipo de usuario (opcional futuro)
+📱 Mejorar el detalle en móviles
 
-Botón hamburguesa visible en móviles
+────────────────────────────────────────────
+💬 NOTAS ADICIONALES:
+────────────────────────────────────────────
+- Todas las páginas están protegidas con `checkAuth.js`.
+- El contenido se oculta visualmente hasta que `firebase.auth().onAuthStateChanged` valida sesión.
+- El sistema de notificación visual usa emojis e íconos, barra de progreso y animación de desaparición.
 
-main con margen ms-md-280 para dejar espacio al sidebar
-
-Responsive 100%
-
-El login tiene una tarjeta centrada, con shadow, rounded y tamaño máximo de 380px.
-
-✅ Cosas que ya funcionan:
-Login / logout
-
-Redirección entre páginas protegidas
-
-Sidebar que colapsa en móviles
-
-Activación de la pestaña activa en el menú
-
-Protección visual para evitar que se vea el contenido antes de validar sesión
-
-✅ Cosas que quiero continuar o mejorar:
-Conectar Firestore para mostrar datos reales en el dashboard
-
-Crear más páginas reutilizando el mismo layout
-
-Agregar un loader (opcional) mientras Firebase verifica la sesión
-
-Posiblemente implementar roles o permisos
-
-Agregar feedback visual en login (spinner, errores)
-
-👉 Por favor continúa ayudándome con este proyecto respetando esta estructura modular y enfoque visual. Si necesitas ver el código de algún archivo específico, te lo puedo compartir.
-
+────────────────────────────────────────────
+🧠 PARA CONTINUAR MÁS TARDE:
+────────────────────────────────────────────
+- Copia y pega este archivo en el prompt de ChatGPT para continuar el proyecto exactamente donde lo dejaste.
