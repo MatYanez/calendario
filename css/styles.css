@@ -195,3 +195,17 @@ a{
   .fc-scrollgrid {
   border: none;
 }
+
+/* Fines de semana con el mismo “gris desactivado” que los días de otro mes */
+#sidebarCalendar.fc.fc-theme-standard .fc-day.is-weekend {
+  background-color: var(--fc-neutral-bg-color, rgba(0,0,0,.04));
+}
+
+#sidebarCalendar.fc.fc-theme-standard .fc-day.is-weekend .fc-daygrid-day-number {
+  color: var(--fc-neutral-text-color, #6c757d);
+}
+
+/* Asegura que los encabezados (L, M, X, ...) queden en mayúscula */
+#sidebarCalendar.fc .fc-col-header-cell-cushion {
+  text-transform: uppercase;
+}

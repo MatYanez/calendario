@@ -50,6 +50,22 @@
         contentHeight: 'auto',
         dayMaxEventRows: 2,
 
+
+          dayHeaderContent: (arg) => {
+    // Muestra solo la inicial en mayúscula
+    return arg.date
+      .toLocaleDateString('es-CL', { weekday: 'narrow' })
+      .toUpperCase();
+  },
+
+  dayCellDidMount: (arg) => {
+    // Marca sábados y domingos
+    const dow = arg.date.getDay(); // 0=Domingo, 6=Sábado
+    if (dow === 0 || dow === 6) {
+      arg.el.classList.add('is-weekend');
+    }
+  },
+
         // FERIADOS CHILE (background events en rojo)
         events: async (info, success, failure) => {
           try {
@@ -138,4 +154,4 @@ const events = feriados.map(h => ({
 })();
 
 
-///v1.3
+///v1.4
