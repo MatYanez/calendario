@@ -150,4 +150,13 @@ a{
   display: block !important;
 }
 
-//v1.1
+#sidebarCalendar.fc.fc-theme-standard
+  .fc-toolbar.fc-header-toolbar
+  .fc-toolbar-chunk
+  .fc-toolbar-title {
+  font-size: 19px;
+  margin-top: 0.5rem;
+}
+
+
+//v1.2
