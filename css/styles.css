@@ -182,3 +182,11 @@ a{
   color: var(--fc-button-text-color);
 }
 
+#sidebarCalendar.fc.fc-theme-standard
+  table.fc-scrollgrid
+  td,
+#sidebarCalendar.fc.fc-theme-standard
+  table.fc-scrollgrid
+  th {
+  border: 0;
+}
