@@ -60,6 +60,22 @@
             </a>
           </li>
         </ul>
+
+<!-- === Calendario (colapsable con FullCalendar) === -->
+<div id="sidebarCalendarWrap" class="mb-3">
+  <!-- Panel colapsable (el calendario va aquí, arriba del botón) -->
+  <div id="sidebarCalendarPanel" class="collapse">
+    <div id="sidebarCalendar" class="p-2 border rounded bg-white"></div>
+  </div>
+
+  <!-- Botón toggle -->
+  <button id="btnToggleSidebarCalendar"
+          class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-between">
+    <span><i class="fa-regular fa-calendar"></i> Calendario</span>
+    <i class="fa-solid fa-chevron-down" id="sidebarCalendarChevron" aria-hidden="true"></i>
+  </button>
+</div>
+
         <hr class="mt-auto">
         <div class="dropdown">
           <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
