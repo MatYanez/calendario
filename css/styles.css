@@ -146,4 +146,8 @@ a{
     min-height: 0!important;
 }
 
-//v1
+#sidebarCalendar.fc.fc-theme-standard .fc-toolbar {
+  display: block !important;
+}
+
+//v1.1
