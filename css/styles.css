@@ -138,6 +138,10 @@ a{
   color: #323232;
 }
 
-#sidebarCalendar.fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
+#sidebarCalendar.fc.fc-theme-standard
+  .fc-dayGridMonth-view.fc-view.fc-daygrid
+  .fc-daygrid-body.fc-daygrid-body-unbalanced
+  .fc-daygrid-day
+  .fc-daygrid-day-events {
     min-height: 0!important;
 }
