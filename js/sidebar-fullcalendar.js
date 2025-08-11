@@ -23,25 +23,57 @@
     const calEl = el(CAL_ID);
     if (!calEl) return;
     if (!calendar) {
-      // FullCalendar global build
       const { Calendar } = window.FullCalendar;
+      window.__feriadosCL = window.__feriadosCL || {}; // cache por año
+
       calendar = new Calendar(calEl, {
         locale: 'es',
-          firstDay: 1,
+        firstDay: 1,               // lunes
         initialView: 'dayGridMonth',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: ''
-        },
+        headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
         height: 'auto',
         contentHeight: 'auto',
         dayMaxEventRows: 2,
-        // Si más adelante quieres inyectar eventos desde Firestore:
-        // events: async (info, success, failure) => { ... }
+
+        // FERIADOS CHILE (background events en rojo)
+        events: async (info, success, failure) => {
+          try {
+            const yStart = info.start.getFullYear();
+            const yEnd   = info.end.getFullYear();
+
+            const toFetch = [];
+            for (let y = yStart; y <= yEnd; y++) {
+              if (!window.__feriadosCL[y]) toFetch.push(y);
+            }
+
+            if (toFetch.length) {
+              const results = await Promise.all(toFetch.map(fetchFeriadosChile));
+              results.forEach((arr, i) => {
+                window.__feriadosCL[toFetch[i]] = Array.isArray(arr) ? arr : [];
+              });
+            }
+
+            const feriados = [];
+            for (let y = yStart; y <= yEnd; y++) {
+              feriados.push(...(window.__feriadosCL[y] || []));
+            }
+
+            const events = feriados.map(h => ({
+              title: h.localName || h.name, // quita esta línea si no quieres tooltip
+              start: h.date,                // YYYY-MM-DD
+              allDay: true,
+              display: 'background',
+              color: 'rgba(220,53,69,0.18)' // rojo suave (Bootstrap danger)
+            }));
+
+            success(events);
+          } catch (err) {
+            console.error(err);
+            failure(err);
+          }
+        }
       });
     }
-    // Render en cada apertura para asegurar tamaños correctos
     calendar.render();
     calendar.updateSize();
   }
