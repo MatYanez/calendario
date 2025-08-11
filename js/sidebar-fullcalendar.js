@@ -27,6 +27,7 @@
       const { Calendar } = window.FullCalendar;
       calendar = new Calendar(calEl, {
         locale: 'es',
+          firstDay: 1,
         initialView: 'dayGridMonth',
         headerToolbar: {
           left: 'prev,next today',
