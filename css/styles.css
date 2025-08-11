@@ -190,3 +190,8 @@ a{
   th {
   border: 0;
 }
+
+#sidebarCalendar.fc.fc-theme-standard
+  .fc-scrollgrid {
+  border: none;
+}
