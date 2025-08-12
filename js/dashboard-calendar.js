@@ -1,21 +1,21 @@
 // js/dashboard-calendar.js
-// FullCalendar v6.1.19 usando solo dayGrid y multimonth (SIN timeGrid ni interaction).
-// Vistas: Semana (dayGridWeek), Mes (dayGridMonth), 3 Meses (multiMonthYear con rango visible fijo).
-// TZ America/Santiago. Mock de eventos.
+// FullCalendar v6.1.19 con @fullcalendar/core + daygrid + multimonth (sin timegrid/interaction).
+// Vistas: Semana (dayGridWeek), Mes (dayGridMonth) y 3 Meses (multiMonthYear con rango fijo).
+// TZ America/Santiago. Aún con mock de eventos. No usa 'plugins: []'.
 
 (function () {
   let currentMode = 'week'; // 'week' | 'month' | 'quarter'
   let anchorDate = new Date();
   const tz = 'America/Santiago';
 
-  // Helpers de fecha
+  // ---------- Helpers ----------
   function toLocalISO(d) {
     const pad = (n) => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
   }
   function startOfMondayWeek(date) {
     const d = new Date(date);
-    const day = d.getDay(); // 0 dom ... 1 lun
+    const day = d.getDay(); // 0=dom,1=lun,...6=sáb
     const diff = (day === 0 ? -6 : 1 - day);
     d.setDate(d.getDate() + diff);
     d.setHours(0,0,0,0);
@@ -34,7 +34,7 @@
     return d;
   }
 
-  // Mock de eventos
+  // ---------- Mock de eventos ----------
   function mockEvents(rangeStart, rangeEnd) {
     const base = startOfMondayWeek(anchorDate);
     const events = [
@@ -52,41 +52,37 @@
     });
   }
 
-  // Montaje
+  // ---------- Montaje ----------
   const el = document.getElementById('dashboardCalendar');
   if (!el) { console.warn('[dashboard-calendar] Falta #dashboardCalendar'); return; }
 
   const calendar = new FullCalendar.Calendar(el, {
-    // Plugins cargados globalmente
-    plugins: [ dayGridPlugin, multiMonthPlugin ],
     timeZone: tz,
     locale: 'es',
     firstDay: 1,
-    initialView: 'dayGridWeek', // Semana (all-day, sin horarios)
+    initialView: 'dayGridWeek', // Semana (lun–dom) sin horas
     headerToolbar: false,
     dayMaxEvents: true,
 
     views: {
       dayGridWeek: { dayHeaderFormat: { weekday: 'short', day: '2-digit', month: 'short' } },
       dayGridMonth: { dayMaxEventRows: true },
-      threeMonth: { type: 'multiMonthYear', duration: { months: 3 } }
+      threeMonth: { type: 'multiMonthYear', duration: { months: 3 } } // requiere multimonth script cargado
     },
 
-    // Callbacks mínimos (sin drag&drop porque no cargamos interaction)
     eventClick(info) {
       console.log('[eventClick]', info.event.id, info.event.title);
     }
   });
 
-  // Carga por rango visible
+  // ---------- Carga por rango ----------
   function reloadEvents() {
     calendar.removeAllEvents();
     const view = calendar.view;
-    const events = mockEvents(view.activeStart, view.activeEnd);
-    calendar.addEventSource(events);
+    calendar.addEventSource(mockEvents(view.activeStart, view.activeEnd));
   }
 
-  // Modos
+  // ---------- Modos ----------
   function gotoWeekOf(date) {
     currentMode = 'week';
     anchorDate = new Date(date);
@@ -113,7 +109,7 @@
     reloadEvents();
   }
 
-  // Navegación
+  // ---------- Navegación ----------
   function goToday() {
     anchorDate = new Date();
     if (currentMode === 'week') gotoWeekOf(anchorDate);
@@ -131,28 +127,20 @@
     else { anchorDate = addMonths(anchorDate, 3); gotoQuarterOf(anchorDate); }
   }
 
-  // Botones
+  // ---------- Botones ----------
   function wireControls() {
-    const byId = (id) => document.getElementById(id);
-    const m = {
-      week: byId('btnCalWeek'),
-      month: byId('btnCalMonth'),
-      quarter: byId('btnCalQuarter'),
-      today: byId('btnCalToday'),
-      prev: byId('btnCalPrev'),
-      next: byId('btnCalNext')
-    };
-    if (m.week) m.week.addEventListener('click', () => gotoWeekOf(anchorDate));
-    if (m.month) m.month.addEventListener('click', () => gotoMonthOf(anchorDate));
-    if (m.quarter) m.quarter.addEventListener('click', () => gotoQuarterOf(anchorDate));
-    if (m.today) m.today.addEventListener('click', goToday);
-    if (m.prev) m.prev.addEventListener('click', goPrev);
-    if (m.next) m.next.addEventListener('click', goNext);
+    const $ = (id) => document.getElementById(id);
+    $('#btnCalWeek')?.addEventListener('click', () => gotoWeekOf(anchorDate));
+    $('#btnCalMonth')?.addEventListener('click', () => gotoMonthOf(anchorDate));
+    $('#btnCalQuarter')?.addEventListener('click', () => gotoQuarterOf(anchorDate));
+    $('#btnCalToday')?.addEventListener('click', goToday);
+    $('#btnCalPrev')?.addEventListener('click', goPrev);
+    $('#btnCalNext')?.addEventListener('click', goNext);
   }
 
   wireControls();
   calendar.render();
-  gotoWeekOf(new Date()); // por defecto Semana (lun→dom)
+  gotoWeekOf(new Date()); // por defecto: semana lun–dom que contiene hoy
 })();
 
-//v1.1
+//v1.2
