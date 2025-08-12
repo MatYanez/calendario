@@ -99,6 +99,10 @@
 <!-- Controles del calendario -->
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2 class="h5 mb-0">Calendario</h2>
+  <div class="d-flex gap-2 my-2">
+  <button id="btnGcalConnect" class="btn btn-success btn-sm">Conectar Google Calendar</button>
+  <button id="btnGcalDisconnect" class="btn btn-outline-danger btn-sm">Desconectar</button>
+</div>
   <div class="btn-group" role="group" aria-label="Rango">
     <button id="btnCalWeek" type="button" class="btn btn-outline-primary">Semana</button>
     <button id="btnCalMonth" type="button" class="btn btn-outline-primary">Mes</button>
@@ -129,6 +133,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/sidebar-fullcalendar.js"></script>
     <script src="js/dashboard-calendar.js"></script>
+    <script async defer src="https://apis.google.com/js/api.js"></script>
+    <script src="js/google-calendar-source.js"></script>
   <script src="js/firebase-init.js"></script>
   <script src="js/checkAuth.js"></script>
   <script src="js/activate-tab.js"></script>
