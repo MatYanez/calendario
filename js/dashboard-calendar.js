@@ -1,8 +1,3 @@
-// js/dashboard-calendar.js
-// FullCalendar v6.1.19 con @fullcalendar/core + daygrid + multimonth (sin timegrid/interaction).
-// Vistas: Semana (dayGridWeek), Mes (dayGridMonth) y 3 Meses (multiMonthYear con rango fijo).
-// TZ America/Santiago. Aún con mock de eventos. No usa 'plugins: []'.
-
 (function () {
   let currentMode = 'week'; // 'week' | 'month' | 'quarter'
   let anchorDate = new Date();
@@ -67,7 +62,7 @@
     views: {
       dayGridWeek: { dayHeaderFormat: { weekday: 'short', day: '2-digit', month: 'short' } },
       dayGridMonth: { dayMaxEventRows: true },
-      threeMonth: { type: 'multiMonthYear', duration: { months: 3 } } // requiere multimonth script cargado
+      threeMonth: { type: 'multiMonthYear', duration: { months: 3 } }
     },
 
     eventClick(info) {
@@ -82,12 +77,20 @@
     calendar.addEventSource(mockEvents(view.activeStart, view.activeEnd));
   }
 
+  // ---------- Utilidad: limpiar visibleRange por si quedó seteado en 3 Meses ----------
+  function clearVisibleRange() {
+    // Algunas builds globales no limpian con null; probamos ambas.
+    calendar.setOption('visibleRange', null);
+    // @ts-ignore
+    calendar.setOption('visibleRange', undefined);
+  }
+
   // ---------- Modos ----------
   function gotoWeekOf(date) {
     currentMode = 'week';
     anchorDate = new Date(date);
     const monday = startOfMondayWeek(anchorDate);
-    calendar.setOption('visibleRange', null);
+    clearVisibleRange();                              // <- fix clave
     calendar.changeView('dayGridWeek', monday);
     reloadEvents();
   }
@@ -95,7 +98,7 @@
     currentMode = 'month';
     anchorDate = new Date(date);
     const first = startOfMonth(anchorDate);
-    calendar.setOption('visibleRange', null);
+    clearVisibleRange();                              // <- fix clave
     calendar.changeView('dayGridMonth', first);
     reloadEvents();
   }
@@ -104,7 +107,7 @@
     anchorDate = new Date(date);
     const first = startOfMonth(anchorDate);
     const end = startOfMonth(addMonths(first, 3)); // exclusivo
-    calendar.setOption('visibleRange', { start: first, end: end });
+    calendar.setOption('visibleRange', { start: first, end: end }); // bloque fijo 3 meses
     calendar.changeView('threeMonth', first);
     reloadEvents();
   }
@@ -117,14 +120,28 @@
     else gotoQuarterOf(anchorDate);
   }
   function goPrev() {
-    if (currentMode === 'week') { anchorDate.setDate(anchorDate.getDate() - 7); gotoWeekOf(anchorDate); }
-    else if (currentMode === 'month') { anchorDate = addMonths(anchorDate, -1); gotoMonthOf(anchorDate); }
-    else { anchorDate = addMonths(anchorDate, -3); gotoQuarterOf(anchorDate); }
+    if (currentMode === 'week') {
+      anchorDate.setDate(anchorDate.getDate() - 7);
+      gotoWeekOf(anchorDate);
+    } else if (currentMode === 'month') {
+      anchorDate = addMonths(anchorDate, -1);
+      gotoMonthOf(anchorDate);
+    } else {
+      anchorDate = addMonths(anchorDate, -3);
+      gotoQuarterOf(anchorDate);
+    }
   }
   function goNext() {
-    if (currentMode === 'week') { anchorDate.setDate(anchorDate.getDate() + 7); gotoWeekOf(anchorDate); }
-    else if (currentMode === 'month') { anchorDate = addMonths(anchorDate, 1); gotoMonthOf(anchorDate); }
-    else { anchorDate = addMonths(anchorDate, 3); gotoQuarterOf(anchorDate); }
+    if (currentMode === 'week') {
+      anchorDate.setDate(anchorDate.getDate() + 7);
+      gotoWeekOf(anchorDate);
+    } else if (currentMode === 'month') {
+      anchorDate = addMonths(anchorDate, 1);
+      gotoMonthOf(anchorDate);
+    } else {
+      anchorDate = addMonths(anchorDate, 3);
+      gotoQuarterOf(anchorDate);
+    }
   }
 
   // ---------- Botones ----------
@@ -143,4 +160,4 @@
   gotoWeekOf(new Date()); // por defecto: semana lun–dom que contiene hoy
 })();
 
-//v1.2
+//v1.4
