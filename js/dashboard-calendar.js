@@ -1,200 +1,137 @@
 // js/dashboard-calendar.js
-// Requiere: FullCalendar v6 (core, dayGrid, timeGrid, interaction, multiMonth), locale es,
-// Bootstrap (para toasts y modals si los usas), y timezone America/Santiago.
-// No conecta aún a Firestore: usa datos de ejemplo. Listo para enchufar fuentes reales.
+// FullCalendar v6.1.19 usando solo dayGrid y multimonth (SIN timeGrid ni interaction).
+// Vistas: Semana (dayGridWeek), Mes (dayGridMonth), 3 Meses (multiMonthYear con rango visible fijo).
+// TZ America/Santiago. Mock de eventos.
 
 (function () {
   let currentMode = 'week'; // 'week' | 'month' | 'quarter'
   let anchorDate = new Date();
   const tz = 'America/Santiago';
 
+  // Helpers de fecha
   function toLocalISO(d) {
     const pad = (n) => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
   }
-
   function startOfMondayWeek(date) {
     const d = new Date(date);
-    const day = d.getDay();
+    const day = d.getDay(); // 0 dom ... 1 lun
     const diff = (day === 0 ? -6 : 1 - day);
     d.setDate(d.getDate() + diff);
     d.setHours(0,0,0,0);
     return d;
   }
-
   function startOfMonth(date) {
     const d = new Date(date);
     d.setDate(1);
     d.setHours(0,0,0,0);
     return d;
   }
-
   function addMonths(date, n) {
     const d = new Date(date);
     d.setMonth(d.getMonth() + n);
+    d.setHours(0,0,0,0);
     return d;
   }
 
+  // Mock de eventos
   function mockEvents(rangeStart, rangeEnd) {
     const base = startOfMondayWeek(anchorDate);
     const events = [
-      {
-        id: 'reu_1',
-        origen: 'reuniones',
-        tipo: 'reunion',
-        title: 'Reunión kickoff',
-        start: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+1, 10, 0)),
-        end: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+1, 11, 0)),
-        backgroundColor: '#3a87ad',
-        borderColor: '#3a87ad'
-      },
-      {
-        id: 'chk_1',
-        origen: 'checklist',
-        tipo: 'tarea',
-        title: 'Enviar presupuesto (Alta)',
-        start: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+2, 0, 0)),
-        allDay: true,
-        backgroundColor: '#0d6efd',
-        borderColor: '#0d6efd'
-      },
-      {
-        id: 'hit_1',
-        origen: 'proyectos',
-        tipo: 'hito',
-        title: 'Deadline proyecto A',
-        start: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+4, 0, 0)),
-        allDay: true,
-        backgroundColor: '#ffc107',
-        borderColor: '#ffc107'
-      },
-      {
-        id: 'reu_2',
-        origen: 'reuniones',
-        tipo: 'reunion',
-        title: 'Revisión semanal',
-        start: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+5, 15, 30)),
-        end: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+5, 16, 30)),
-        backgroundColor: '#3a87ad',
-        borderColor: '#3a87ad'
-      }
+      { id:'reu_1', title:'Reunión kickoff', start: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+1, 10)), end: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+1, 11)), backgroundColor:'#3a87ad', borderColor:'#3a87ad' },
+      { id:'chk_1', title:'Enviar presupuesto (Alta)', start: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+2, 0)), allDay:true, backgroundColor:'#0d6efd', borderColor:'#0d6efd' },
+      { id:'hit_1', title:'Deadline proyecto A', start: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+4, 0)), allDay:true, backgroundColor:'#ffc107', borderColor:'#ffc107' },
+      { id:'reu_2', title:'Revisión semanal', start: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+5, 15, 30)), end: toLocalISO(new Date(base.getFullYear(), base.getMonth(), base.getDate()+5, 16, 30)), backgroundColor:'#3a87ad', borderColor:'#3a87ad' }
     ];
-    const startTs = rangeStart.getTime();
-    const endTs = rangeEnd.getTime();
+    const sTs = rangeStart.getTime();
+    const eTs = rangeEnd.getTime();
     return events.filter(ev => {
       const s = new Date(ev.start).getTime();
       const e = new Date(ev.end || ev.start).getTime();
-      return e >= startTs && s <= endTs;
+      return e >= sTs && s <= eTs;
     });
   }
 
+  // Montaje
   const el = document.getElementById('dashboardCalendar');
-  if (!el) {
-    console.warn('[dashboard-calendar] No existe #dashboardCalendar en el DOM.');
-    return;
-  }
+  if (!el) { console.warn('[dashboard-calendar] Falta #dashboardCalendar'); return; }
 
   const calendar = new FullCalendar.Calendar(el, {
+    // Plugins cargados globalmente
+    plugins: [ dayGridPlugin, multiMonthPlugin ],
     timeZone: tz,
     locale: 'es',
     firstDay: 1,
-    initialView: 'timeGridWeek',
+    initialView: 'dayGridWeek', // Semana (all-day, sin horarios)
     headerToolbar: false,
-    slotMinTime: '08:00:00',
-    slotMaxTime: '20:00:00',
-    nowIndicator: true,
-    selectable: true,
-    editable: true,
     dayMaxEvents: true,
+
     views: {
+      dayGridWeek: { dayHeaderFormat: { weekday: 'short', day: '2-digit', month: 'short' } },
       dayGridMonth: { dayMaxEventRows: true },
-      timeGridWeek: { dayHeaderFormat: { weekday: 'short', day: '2-digit', month: 'short' } },
-      threeMonth: {
-        type: 'multiMonthYear',
-        duration: { months: 3 }
-      }
+      threeMonth: { type: 'multiMonthYear', duration: { months: 3 } }
     },
+
+    // Callbacks mínimos (sin drag&drop porque no cargamos interaction)
     eventClick(info) {
       console.log('[eventClick]', info.event.id, info.event.title);
-    },
-    eventDrop(info) {
-      console.log('[eventDrop]', info.event.id, info.event.start, info.event.end);
-    },
-    eventResize(info) {
-      console.log('[eventResize]', info.event.id, info.event.start, info.event.end);
     }
   });
 
+  // Carga por rango visible
   function reloadEvents() {
     calendar.removeAllEvents();
     const view = calendar.view;
-    const rangeStart = view.activeStart;
-    const rangeEnd = view.activeEnd;
-    const events = mockEvents(rangeStart, rangeEnd);
+    const events = mockEvents(view.activeStart, view.activeEnd);
     calendar.addEventSource(events);
   }
 
+  // Modos
   function gotoWeekOf(date) {
     currentMode = 'week';
     anchorDate = new Date(date);
     const monday = startOfMondayWeek(anchorDate);
-    calendar.changeView('timeGridWeek', monday);
     calendar.setOption('visibleRange', null);
+    calendar.changeView('dayGridWeek', monday);
     reloadEvents();
   }
-
   function gotoMonthOf(date) {
     currentMode = 'month';
     anchorDate = new Date(date);
     const first = startOfMonth(anchorDate);
-    calendar.changeView('dayGridMonth', first);
     calendar.setOption('visibleRange', null);
+    calendar.changeView('dayGridMonth', first);
     reloadEvents();
   }
-
   function gotoQuarterOf(date) {
     currentMode = 'quarter';
     anchorDate = new Date(date);
     const first = startOfMonth(anchorDate);
-    const end = startOfMonth(addMonths(first, 3));
+    const end = startOfMonth(addMonths(first, 3)); // exclusivo
     calendar.setOption('visibleRange', { start: first, end: end });
     calendar.changeView('threeMonth', first);
     reloadEvents();
   }
 
+  // Navegación
   function goToday() {
     anchorDate = new Date();
     if (currentMode === 'week') gotoWeekOf(anchorDate);
     else if (currentMode === 'month') gotoMonthOf(anchorDate);
     else gotoQuarterOf(anchorDate);
   }
-
   function goPrev() {
-    if (currentMode === 'week') {
-      anchorDate.setDate(anchorDate.getDate() - 7);
-      gotoWeekOf(anchorDate);
-    } else if (currentMode === 'month') {
-      anchorDate = addMonths(anchorDate, -1);
-      gotoMonthOf(anchorDate);
-    } else {
-      anchorDate = addMonths(anchorDate, -3);
-      gotoQuarterOf(anchorDate);
-    }
+    if (currentMode === 'week') { anchorDate.setDate(anchorDate.getDate() - 7); gotoWeekOf(anchorDate); }
+    else if (currentMode === 'month') { anchorDate = addMonths(anchorDate, -1); gotoMonthOf(anchorDate); }
+    else { anchorDate = addMonths(anchorDate, -3); gotoQuarterOf(anchorDate); }
   }
-
   function goNext() {
-    if (currentMode === 'week') {
-      anchorDate.setDate(anchorDate.getDate() + 7);
-      gotoWeekOf(anchorDate);
-    } else if (currentMode === 'month') {
-      anchorDate = addMonths(anchorDate, 1);
-      gotoMonthOf(anchorDate);
-    } else {
-      anchorDate = addMonths(anchorDate, 3);
-      gotoQuarterOf(anchorDate);
-    }
+    if (currentMode === 'week') { anchorDate.setDate(anchorDate.getDate() + 7); gotoWeekOf(anchorDate); }
+    else if (currentMode === 'month') { anchorDate = addMonths(anchorDate, 1); gotoMonthOf(anchorDate); }
+    else { anchorDate = addMonths(anchorDate, 3); gotoQuarterOf(anchorDate); }
   }
 
+  // Botones
   function wireControls() {
     const byId = (id) => document.getElementById(id);
     const m = {
@@ -215,7 +152,7 @@
 
   wireControls();
   calendar.render();
-  gotoWeekOf(new Date());
+  gotoWeekOf(new Date()); // por defecto Semana (lun→dom)
 })();
 
-//v1
+//v1.1
