@@ -95,7 +95,28 @@
     <!-- CONTENIDO PRINCIPAL -->
     <main class="p-4 w-100" style="min-height: 100vh;">
       <h1 class="mb-4">Dashboard</h1>
-      <p>Contenido específico para esta página.</p>
+
+      
+<!-- Controles del calendario -->
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h2 class="h5 mb-0">Calendario</h2>
+  <div class="btn-group" role="group" aria-label="Rango">
+    <button id="btnCalWeek" type="button" class="btn btn-outline-primary">Semana</button>
+    <button id="btnCalMonth" type="button" class="btn btn-outline-primary">Mes</button>
+    <button id="btnCalQuarter" type="button" class="btn btn-outline-primary">3 Meses</button>
+  </div>
+  <div class="btn-group" role="group" aria-label="Navegación">
+    <button id="btnCalPrev" type="button" class="btn btn-outline-secondary">&laquo;</button>
+    <button id="btnCalToday" type="button" class="btn btn-secondary">Hoy</button>
+    <button id="btnCalNext" type="button" class="btn btn-outline-secondary">&raquo;</button>
+  </div>
+</div>
+
+<!-- Contenedor del calendario -->
+<div id="dashboardCalendar" class="card p-2"></div>
+
+
+
     </main>
   </div>
 
@@ -108,6 +129,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/sidebar-fullcalendar.js"></script>
+    <script src="js/dashboard-calendar.js"></script>
   <script src="js/firebase-init.js"></script>
   <script src="js/checkAuth.js"></script>
   <script src="js/activate-tab.js"></script>
