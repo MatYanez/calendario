@@ -1,8 +1,3 @@
-// js/sidebar-fullcalendar.js
-// Requiere: Bootstrap (bundle), FullCalendar global build:
-// <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
-// <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.19/locales/es.global.min.js"></script>
-
 (function () {
   const PANEL_ID   = 'sidebarCalendarPanel';
   const CAL_ID     = 'sidebarCalendar';
@@ -44,27 +39,27 @@
       calendar = new Calendar(calEl, {
         locale: 'es',
         firstDay: 1,               // lunes
+        hiddenDays: [0, 6],        // 🔴 ocultar domingo (0) y sábado (6)
         initialView: 'dayGridMonth',
         headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
         height: 'auto',
         contentHeight: 'auto',
         dayMaxEventRows: 2,
 
+        dayHeaderContent: (arg) => {
+          // Muestra solo la inicial en mayúscula
+          return arg.date
+            .toLocaleDateString('es-CL', { weekday: 'narrow' })
+            .toUpperCase();
+        },
 
-          dayHeaderContent: (arg) => {
-    // Muestra solo la inicial en mayúscula
-    return arg.date
-      .toLocaleDateString('es-CL', { weekday: 'narrow' })
-      .toUpperCase();
-  },
-
-  dayCellDidMount: (arg) => {
-    // Marca sábados y domingos
-    const dow = arg.date.getDay(); // 0=Domingo, 6=Sábado
-    if (dow === 0 || dow === 6) {
-      arg.el.classList.add('is-weekend');
-    }
-  },
+        dayCellDidMount: (arg) => {
+          // Marca sábados y domingos (si se ocultaron, no aplica visualmente)
+          const dow = arg.date.getDay(); // 0=Domingo, 6=Sábado
+          if (dow === 0 || dow === 6) {
+            arg.el.classList.add('is-weekend');
+          }
+        },
 
         // FERIADOS CHILE (background events en rojo)
         events: async (info, success, failure) => {
@@ -88,12 +83,13 @@
             for (let y = yStart; y <= yEnd; y++) {
               feriados.push(...(window.__feriadosCL[y] || []));
             }
-const events = feriados.map(h => ({
-  start: h.date,          // ← sin title
-  allDay: true,
-  display: 'background',
-  color: 'rgba(220, 53, 70, 0.5)' // rojo suave para el día feriado
-}));
+
+            const events = feriados.map(h => ({
+              start: h.date,          // ← sin title
+              allDay: true,
+              display: 'background',
+              color: 'rgba(220, 53, 70, 0.5)' // rojo suave para el día feriado
+            }));
             success(events);
           } catch (err) {
             console.error(err);
@@ -153,5 +149,4 @@ const events = feriados.map(h => ({
     : init();
 })();
 
-
-///v1.4
+///v1.5
