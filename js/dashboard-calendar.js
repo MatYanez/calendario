@@ -1,8 +1,9 @@
-(function () {
-  let currentMode = 'week'; // 'week' | 'month' | 'quarter'
-  let anchorDate = new Date();
-  const tz = 'America/Santiago';
+// js/dashboard-calendar.js
+// FullCalendar v6.1.19 con @fullcalendar/core + daygrid + multimonth (sin timegrid/interaction).
+// Vistas: Semana (dayGridWeek), Mes (dayGridMonth), 3 Meses (multiMonthYear con visibleRange fijo).
+// TZ America/Santiago. Mock de eventos. Inicializa SOLO cuando el DOM está listo.
 
+(function () {
   // ---------- Helpers ----------
   function toLocalISO(d) {
     const pad = (n) => String(n).padStart(2, '0');
@@ -10,7 +11,7 @@
   }
   function startOfMondayWeek(date) {
     const d = new Date(date);
-    const day = d.getDay(); // 0=dom,1=lun,...6=sáb
+    const day = d.getDay(); // 0 dom, 1 lun, ... 6 sáb
     const diff = (day === 0 ? -6 : 1 - day);
     d.setDate(d.getDate() + diff);
     d.setHours(0,0,0,0);
@@ -28,6 +29,11 @@
     d.setHours(0,0,0,0);
     return d;
   }
+
+  // ---------- Estado ----------
+  let currentMode = 'week'; // 'week' | 'month' | 'quarter'
+  let anchorDate = new Date();
+  let calendar = null;
 
   // ---------- Mock de eventos ----------
   function mockEvents(rangeStart, rangeEnd) {
@@ -47,50 +53,25 @@
     });
   }
 
-  // ---------- Montaje ----------
-  const el = document.getElementById('dashboardCalendar');
-  if (!el) { console.warn('[dashboard-calendar] Falta #dashboardCalendar'); return; }
-
-  const calendar = new FullCalendar.Calendar(el, {
-    timeZone: tz,
-    locale: 'es',
-    firstDay: 1,
-    initialView: 'dayGridWeek', // Semana (lun–dom) sin horas
-    headerToolbar: false,
-    dayMaxEvents: true,
-
-    views: {
-      dayGridWeek: { dayHeaderFormat: { weekday: 'short', day: '2-digit', month: 'short' } },
-      dayGridMonth: { dayMaxEventRows: true },
-      threeMonth: { type: 'multiMonthYear', duration: { months: 3 } }
-    },
-
-    eventClick(info) {
-      console.log('[eventClick]', info.event.id, info.event.title);
-    }
-  });
-
-  // ---------- Carga por rango ----------
+  // ---------- Utilidades calendario ----------
   function reloadEvents() {
     calendar.removeAllEvents();
     const view = calendar.view;
     calendar.addEventSource(mockEvents(view.activeStart, view.activeEnd));
   }
-
-  // ---------- Utilidad: limpiar visibleRange por si quedó seteado en 3 Meses ----------
   function clearVisibleRange() {
-    // Algunas builds globales no limpian con null; probamos ambas.
     calendar.setOption('visibleRange', null);
+    // algunas builds requieren undefined para limpiar realmente
     // @ts-ignore
     calendar.setOption('visibleRange', undefined);
   }
 
-  // ---------- Modos ----------
+  // Modos
   function gotoWeekOf(date) {
     currentMode = 'week';
     anchorDate = new Date(date);
     const monday = startOfMondayWeek(anchorDate);
-    clearVisibleRange();                              // <- fix clave
+    clearVisibleRange();
     calendar.changeView('dayGridWeek', monday);
     reloadEvents();
   }
@@ -98,7 +79,7 @@
     currentMode = 'month';
     anchorDate = new Date(date);
     const first = startOfMonth(anchorDate);
-    clearVisibleRange();                              // <- fix clave
+    clearVisibleRange();
     calendar.changeView('dayGridMonth', first);
     reloadEvents();
   }
@@ -107,12 +88,13 @@
     anchorDate = new Date(date);
     const first = startOfMonth(anchorDate);
     const end = startOfMonth(addMonths(first, 3)); // exclusivo
-    calendar.setOption('visibleRange', { start: first, end: end }); // bloque fijo 3 meses
+    calendar.setOption('visibleRange', { start: first, end: end });
+    // vista multi-mes (requiere haber cargado @fullcalendar/multimonth)
     calendar.changeView('threeMonth', first);
     reloadEvents();
   }
 
-  // ---------- Navegación ----------
+  // Navegación
   function goToday() {
     anchorDate = new Date();
     if (currentMode === 'week') gotoWeekOf(anchorDate);
@@ -120,44 +102,68 @@
     else gotoQuarterOf(anchorDate);
   }
   function goPrev() {
-    if (currentMode === 'week') {
-      anchorDate.setDate(anchorDate.getDate() - 7);
-      gotoWeekOf(anchorDate);
-    } else if (currentMode === 'month') {
-      anchorDate = addMonths(anchorDate, -1);
-      gotoMonthOf(anchorDate);
-    } else {
-      anchorDate = addMonths(anchorDate, -3);
-      gotoQuarterOf(anchorDate);
-    }
+    if (currentMode === 'week') { anchorDate.setDate(anchorDate.getDate() - 7); gotoWeekOf(anchorDate); }
+    else if (currentMode === 'month') { anchorDate = addMonths(anchorDate, -1); gotoMonthOf(anchorDate); }
+    else { anchorDate = addMonths(anchorDate, -3); gotoQuarterOf(anchorDate); }
   }
   function goNext() {
-    if (currentMode === 'week') {
-      anchorDate.setDate(anchorDate.getDate() + 7);
-      gotoWeekOf(anchorDate);
-    } else if (currentMode === 'month') {
-      anchorDate = addMonths(anchorDate, 1);
-      gotoMonthOf(anchorDate);
-    } else {
-      anchorDate = addMonths(anchorDate, 3);
-      gotoQuarterOf(anchorDate);
+    if (currentMode === 'week') { anchorDate.setDate(anchorDate.getDate() + 7); gotoWeekOf(anchorDate); }
+    else if (currentMode === 'month') { anchorDate = addMonths(anchorDate, 1); gotoMonthOf(anchorDate); }
+    else { anchorDate = addMonths(anchorDate, 3); gotoQuarterOf(anchorDate); }
+  }
+
+  // ---------- Inicialización segura al estar el DOM listo ----------
+  function init() {
+    const el = document.getElementById('dashboardCalendar');
+    if (!el) {
+      console.warn('[dashboard-calendar] No existe #dashboardCalendar en el DOM.');
+      return;
     }
+
+    // Log para verificar botones
+    const ids = ['btnCalWeek','btnCalMonth','btnCalQuarter','btnCalPrev','btnCalToday','btnCalNext'];
+    ids.forEach(id => {
+      const found = !!document.getElementById(id);
+      console.log(`[dashboard-calendar] ${id}: ${found ? 'OK' : 'NO ENCONTRADO'}`);
+    });
+
+    calendar = new FullCalendar.Calendar(el, {
+      timeZone: 'America/Santiago',
+      locale: 'es',
+      firstDay: 1,
+      initialView: 'dayGridWeek',
+      headerToolbar: false,
+      dayMaxEvents: true,
+      views: {
+        dayGridWeek: { dayHeaderFormat: { weekday: 'short', day: '2-digit', month: 'short' } },
+        dayGridMonth: { dayMaxEventRows: true },
+        threeMonth: { type: 'multiMonthYear', duration: { months: 3 } } // requiere multimonth
+      },
+      eventClick(info) {
+        console.log('[eventClick]', info.event.id, info.event.title);
+      }
+    });
+
+    // Wire de botones (después de existir en el DOM)
+    const $ = id => document.getElementById(id);
+    $('#btnCalWeek')  && $('#btnCalWeek').addEventListener('click', () => gotoWeekOf(anchorDate));
+    $('#btnCalMonth') && $('#btnCalMonth').addEventListener('click', () => gotoMonthOf(anchorDate));
+    $('#btnCalQuarter') && $('#btnCalQuarter').addEventListener('click', () => gotoQuarterOf(anchorDate));
+    $('#btnCalToday') && $('#btnCalToday').addEventListener('click', goToday);
+    $('#btnCalPrev')  && $('#btnCalPrev').addEventListener('click', goPrev);
+    $('#btnCalNext')  && $('#btnCalNext').addEventListener('click', goNext);
+
+    calendar.render();
+    gotoWeekOf(new Date()); // por defecto: semana lun–dom que contiene hoy
   }
 
-  // ---------- Botones ----------
-  function wireControls() {
-    const $ = (id) => document.getElementById(id);
-    $('#btnCalWeek')?.addEventListener('click', () => gotoWeekOf(anchorDate));
-    $('#btnCalMonth')?.addEventListener('click', () => gotoMonthOf(anchorDate));
-    $('#btnCalQuarter')?.addEventListener('click', () => gotoQuarterOf(anchorDate));
-    $('#btnCalToday')?.addEventListener('click', goToday);
-    $('#btnCalPrev')?.addEventListener('click', goPrev);
-    $('#btnCalNext')?.addEventListener('click', goNext);
+  // Espera DOM listo
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    // pequeño timeout para asegurar que la UI ya se pintó
+    setTimeout(init, 0);
+  } else {
+    document.addEventListener('DOMContentLoaded', init);
   }
-
-  wireControls();
-  calendar.render();
-  gotoWeekOf(new Date()); // por defecto: semana lun–dom que contiene hoy
 })();
 
-//v1.4
+//v1.5
