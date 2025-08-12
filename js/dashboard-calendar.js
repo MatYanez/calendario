@@ -1,7 +1,7 @@
 // js/dashboard-calendar.js
-// FullCalendar v6.1.19 con @fullcalendar/core + daygrid + multimonth (sin timegrid/interaction).
+// FullCalendar v6.1.19 con @fullcalendar/core + daygrid + multimonth.
 // Vistas: Semana (dayGridWeek), Mes (dayGridMonth), 3 Meses (multiMonthYear con visibleRange fijo).
-// TZ America/Santiago. Mock de eventos. Inicializa SOLO cuando el DOM está listo.
+// TZ America/Santiago. Mock de eventos. Handlers robustos con preventDefault y logs.
 
 (function () {
   // ---------- Helpers ----------
@@ -55,42 +55,49 @@
 
   // ---------- Utilidades calendario ----------
   function reloadEvents() {
+    if (!calendar) return;
     calendar.removeAllEvents();
     const view = calendar.view;
     calendar.addEventSource(mockEvents(view.activeStart, view.activeEnd));
   }
   function clearVisibleRange() {
+    if (!calendar) return;
     calendar.setOption('visibleRange', null);
-    // algunas builds requieren undefined para limpiar realmente
+    // Algunas builds globales limpian recién con undefined:
     // @ts-ignore
     calendar.setOption('visibleRange', undefined);
   }
 
   // Modos
   function gotoWeekOf(date) {
+    if (!calendar) return;
     currentMode = 'week';
     anchorDate = new Date(date);
     const monday = startOfMondayWeek(anchorDate);
     clearVisibleRange();
     calendar.changeView('dayGridWeek', monday);
+    console.log('[calendar] view => Semana (', monday.toDateString(), ')');
     reloadEvents();
   }
   function gotoMonthOf(date) {
+    if (!calendar) return;
     currentMode = 'month';
     anchorDate = new Date(date);
     const first = startOfMonth(anchorDate);
     clearVisibleRange();
     calendar.changeView('dayGridMonth', first);
+    console.log('[calendar] view => Mes (', first.toDateString(), ')');
     reloadEvents();
   }
   function gotoQuarterOf(date) {
+    if (!calendar) return;
     currentMode = 'quarter';
     anchorDate = new Date(date);
     const first = startOfMonth(anchorDate);
     const end = startOfMonth(addMonths(first, 3)); // exclusivo
     calendar.setOption('visibleRange', { start: first, end: end });
-    // vista multi-mes (requiere haber cargado @fullcalendar/multimonth)
     calendar.changeView('threeMonth', first);
+    console.log('[calendar] view => 3 Meses (', first.toDateString(), '→', end.toDateString(), ')');
     reloadEvents();
   }
 
@@ -115,17 +122,7 @@
   // ---------- Inicialización segura al estar el DOM listo ----------
   function init() {
     const el = document.getElementById('dashboardCalendar');
-    if (!el) {
-      console.warn('[dashboard-calendar] No existe #dashboardCalendar en el DOM.');
-      return;
-    }
-
-    // Log para verificar botones
-    const ids = ['btnCalWeek','btnCalMonth','btnCalQuarter','btnCalPrev','btnCalToday','btnCalNext'];
-    ids.forEach(id => {
-      const found = !!document.getElementById(id);
-      console.log(`[dashboard-calendar] ${id}: ${found ? 'OK' : 'NO ENCONTRADO'}`);
-    });
+    if (!el) { console.warn('[dashboard-calendar] No existe #dashboardCalendar en el DOM.'); return; }
 
     calendar = new FullCalendar.Calendar(el, {
       timeZone: 'America/Santiago',
@@ -135,35 +132,55 @@
       headerToolbar: false,
       dayMaxEvents: true,
       views: {
-        dayGridWeek: { dayHeaderFormat: { weekday: 'short', day: '2-digit', month: 'short' } },
+        dayGridWeek:  { dayHeaderFormat: { weekday: 'short', day: '2-digit', month: 'short' } },
         dayGridMonth: { dayMaxEventRows: true },
-        threeMonth: { type: 'multiMonthYear', duration: { months: 3 } } // requiere multimonth
+        threeMonth:   { type: 'multiMonthYear', duration: { months: 3 } } // requiere multimonth cargado
       },
       eventClick(info) {
         console.log('[eventClick]', info.event.id, info.event.title);
       }
     });
 
-    // Wire de botones (después de existir en el DOM)
-    const $ = id => document.getElementById(id);
-    $('#btnCalWeek')  && $('#btnCalWeek').addEventListener('click', () => gotoWeekOf(anchorDate));
-    $('#btnCalMonth') && $('#btnCalMonth').addEventListener('click', () => gotoMonthOf(anchorDate));
-    $('#btnCalQuarter') && $('#btnCalQuarter').addEventListener('click', () => gotoQuarterOf(anchorDate));
-    $('#btnCalToday') && $('#btnCalToday').addEventListener('click', goToday);
-    $('#btnCalPrev')  && $('#btnCalPrev').addEventListener('click', goPrev);
-    $('#btnCalNext')  && $('#btnCalNext').addEventListener('click', goNext);
+    // Wire de botones (robusto)
+    const on = (id, handler) => {
+      const el = document.getElementById(id);
+      if (!el) { console.warn(`[dashboard-calendar] ${id}: NO ENCONTRADO`); return; }
+      const wrap = (ev) => {
+        ev.preventDefault(); ev.stopPropagation();
+        console.log(`[ui] click ${id}`);
+        handler();
+      };
+      el.addEventListener('click', wrap, true);
+      el.addEventListener('pointerup', wrap, true);
+    };
+
+    on('btnCalWeek',   () => gotoWeekOf(anchorDate));
+    on('btnCalMonth',  () => gotoMonthOf(anchorDate));
+    on('btnCalQuarter',() => gotoQuarterOf(anchorDate));
+    on('btnCalToday',  () => goToday());
+    on('btnCalPrev',   () => goPrev());
+    on('btnCalNext',   () => goNext());
+
+    // Atajos de teclado (por si los clicks estuvieran bloqueados por estilos/overlay):
+    document.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) return;
+      if (e.key.toLowerCase() === 'w') { console.log('[kb] W => Semana'); gotoWeekOf(anchorDate); }
+      if (e.key.toLowerCase() === 'm') { console.log('[kb] M => Mes'); gotoMonthOf(anchorDate); }
+      if (e.key === '3')               { console.log('[kb] 3 => 3 Meses'); gotoQuarterOf(anchorDate); }
+      if (e.key === 'ArrowLeft')       { console.log('[kb] ← => Prev'); goPrev(); }
+      if (e.key === 'ArrowRight')      { console.log('[kb] → => Next'); goNext(); }
+      if (e.key.toLowerCase() === 't') { console.log('[kb] T => Hoy'); goToday(); }
+    });
 
     calendar.render();
-    gotoWeekOf(new Date()); // por defecto: semana lun–dom que contiene hoy
+    gotoWeekOf(new Date()); // por defecto: semana lun–dom
   }
 
-  // Espera DOM listo
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    // pequeño timeout para asegurar que la UI ya se pintó
     setTimeout(init, 0);
   } else {
     document.addEventListener('DOMContentLoaded', init);
   }
 })();
 
-//v1.5
+//v1.6
