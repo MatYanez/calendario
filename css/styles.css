@@ -143,7 +143,7 @@ a{
   .fc-daygrid-body.fc-daygrid-body-unbalanced
   .fc-daygrid-day
   .fc-daygrid-day-events {
-    min-height: 0!important;
+    display: none!important;
 }
 
 #sidebarCalendar.fc.fc-theme-standard .fc-toolbar {
@@ -208,4 +208,11 @@ a{
 /* Asegura que los encabezados (L, M, X, ...) queden en mayúscula */
 #sidebarCalendar.fc .fc-col-header-cell-cushion {
   text-transform: uppercase;
+}
+
+#sidebarCalendar.fc.fc-theme-standard .fc-dayGridMonth-view.fc-view.fc-daygrid .fc-daygrid-body.fc-daygrid-body-unbalanced .fc-daygrid-day .fc-daygrid-day-top{
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
 }
