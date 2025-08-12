@@ -40,18 +40,12 @@
         locale: 'es',
         firstDay: 1,               // lunes como primer día
         weekends: true,            // mostrar sábados y domingos
+        dayHeaderFormat: { weekday: 'narrow' }, // formato integrado de FC
         initialView: 'dayGridMonth',
         headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
         height: 'auto',
         contentHeight: 'auto',
         dayMaxEventRows: 2,
-
-        dayHeaderContent: (arg) => {
-          // Muestra solo la inicial en mayúscula
-          return arg.date
-            .toLocaleDateString('es-CL', { weekday: 'narrow' })
-            .toUpperCase();
-        },
 
         dayCellDidMount: (arg) => {
           // Marca sábados y domingos
@@ -149,4 +143,4 @@
     : init();
 })();
 
-///v1.6
+///v1.7
