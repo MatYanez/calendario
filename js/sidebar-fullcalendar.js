@@ -38,8 +38,8 @@
 
       calendar = new Calendar(calEl, {
         locale: 'es',
-        firstDay: 1,               // lunes
-        hiddenDays: [0, 6],        // 🔴 ocultar domingo (0) y sábado (6)
+        firstDay: 1,               // lunes como primer día
+        weekends: true,            // mostrar sábados y domingos
         initialView: 'dayGridMonth',
         headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
         height: 'auto',
@@ -54,7 +54,7 @@
         },
 
         dayCellDidMount: (arg) => {
-          // Marca sábados y domingos (si se ocultaron, no aplica visualmente)
+          // Marca sábados y domingos
           const dow = arg.date.getDay(); // 0=Domingo, 6=Sábado
           if (dow === 0 || dow === 6) {
             arg.el.classList.add('is-weekend');
@@ -149,4 +149,4 @@
     : init();
 })();
 
-///v1.5
+///v1.6
