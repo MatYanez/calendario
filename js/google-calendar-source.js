@@ -1,33 +1,49 @@
 // js/google-calendar-source.js
-// Lee eventos privados del calendario 'primary' del usuario con OAuth y los inyecta en FullCalendar.
+// Integra Google Calendar (privado) con OAuth y FullCalendar.
 // Requiere: <script async defer src="https://apis.google.com/js/api.js"></script>
 // y que window._dashboardCalendar exista (lo expones en dashboard-calendar.js)
+// Usa gapi.client + gapi.auth2 (flujo popup). Carga e inicializa de forma robusta.
 
 (function () {
-  // ✅ TUS CREDENCIALES
+  // ===== CREDENCIALES =====
   const CLIENT_ID = '866172124153-n0vg6red5pdadtm9ia61a9vksh79ip6j.apps.googleusercontent.com';
   const API_KEY   = 'AIzaSyAgIfQt1_SbtAlAhHQhvn_W2WN7fAtG478';
 
+  // ===== CONST =====
   const SCOPES    = 'https://www.googleapis.com/auth/calendar.readonly';
   const DISCOVERY = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
-  const SOURCE_ID = '__gcal_primary__'; // id interno para poder reemplazar la fuente
+  const SOURCE_ID = '__gcal_primary__';
 
-  // Obtiene rango visible del FullCalendar
+  // ===== UTILS =====
+  const waitFor = (cond, interval = 50, timeout = 10000) => new Promise((resolve, reject) => {
+    const start = Date.now();
+    const t = setInterval(() => {
+      try {
+        if (cond()) { clearInterval(t); resolve(true); }
+        else if (Date.now() - start > timeout) { clearInterval(t); reject(new Error('waitFor timeout')); }
+      } catch (e) { clearInterval(t); reject(e); }
+    }, interval);
+  });
+
+  const log = (...args) => console.log('[gcal]', ...args);
+  const warn = (...args) => console.warn('[gcal]', ...args);
+  const error = (...args) => console.error('[gcal]', ...args);
+
+  // ===== FC helpers =====
   function getVisibleRange() {
     const cal = window._dashboardCalendar;
     if (!cal) return null;
     return {
       start: cal.view.activeStart.toISOString(),
-      end: cal.view.activeEnd.toISOString()
+      end:   cal.view.activeEnd.toISOString()
     };
   }
 
-  // Mapea eventos de Google Calendar a FullCalendar
   function mapGcalToFc(items) {
     return (items || []).map(ev => ({
       id: ev.id,
       title: ev.summary || '(sin título)',
-      start: ev.start?.dateTime || ev.start?.date,   // date => allDay
+      start: ev.start?.dateTime || ev.start?.date,
       end:   ev.end?.dateTime   || ev.end?.date || null,
       allDay: !!ev.start?.date,
       backgroundColor: '#198754',
@@ -41,7 +57,6 @@
     }));
   }
 
-  // Inserta/reemplaza la fuente en FullCalendar
   function upsertSource(events) {
     const cal = window._dashboardCalendar;
     if (!cal) return;
@@ -52,7 +67,7 @@
 
   async function listEvents() {
     const range = getVisibleRange();
-    if (!range) return;
+    if (!range) { warn('No hay calendario visible aún.'); return; }
     const res = await gapi.client.calendar.events.list({
       calendarId: 'primary',
       timeMin: range.start,
@@ -63,110 +78,138 @@
     });
     const items = res.result.items || [];
     upsertSource(mapGcalToFc(items));
-    console.log(`[gcal] cargados ${items.length} eventos`);
+    log(`cargados ${items.length} eventos para ${new Date(range.start).toDateString()} → ${new Date(range.end).toDateString()}`);
   }
 
-  // ---------- Auth ----------
+  // ===== GAPI AUTH FLOW (robusto) =====
+  let _initing = false;
+
+  async function ensureGapiLoaded() {
+    if (window.gapi) return true;
+    await waitFor(() => !!window.gapi, 50, 15000);
+    return true;
+  }
+
+  async function ensureClientAndAuth2() {
+    await ensureGapiLoaded();
+
+    return new Promise((resolve, reject) => {
+      try {
+        gapi.load('client:auth2', async () => {
+          try {
+            // init client (API key + discovery)
+            if (!gapi.client?.calendar) {
+              await gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: [DISCOVERY]
+              });
+              log('gapi.client inicializado');
+            }
+
+            // init auth2 (si no existe)
+            if (!gapi.auth2 || !gapi.auth2.getAuthInstance?.()) {
+              await gapi.auth2.init({ client_id: CLIENT_ID, scope: SCOPES });
+              log('gapi.auth2 inicializado');
+            }
+            resolve(true);
+          } catch (e) {
+            error('Error en gapi.client.init / gapi.auth2.init', e);
+            reject(e);
+          }
+        });
+      } catch (e) {
+        error('Error al cargar módulos client:auth2', e);
+        reject(e);
+      }
+    });
+  }
+
   async function ensureSignedIn() {
     const auth = gapi.auth2.getAuthInstance();
+    if (!auth) throw new Error('auth2 no inicializado');
     if (!auth.isSignedIn.get()) {
-      await auth.signIn(); // popup
+      log('Solicitando login (popup)…');
+      await auth.signIn();
+      log('Login OK');
+    } else {
+      log('Ya estaba autenticado');
     }
   }
 
-  async function initClient() {
-    await gapi.client.init({
-      apiKey: API_KEY,
-      clientId: CLIENT_ID,
-      discoveryDocs: [DISCOVERY],
-      scope: SCOPES
-    });
+  async function startFlow() {
+    try {
+      if (_initing) { log('Inicio en curso…'); return; }
+      _initing = true;
 
-    await ensureSignedIn();
-    await listEvents();
+      await ensureClientAndAuth2();
+      await ensureSignedIn();
+      await listEvents();
 
-    // Recargar al cambiar de rango en FullCalendar
-    const cal = window._dashboardCalendar;
-    if (cal && !cal.__gcalHooked) {
-      cal.__gcalHooked = true;
-      cal.on('datesSet', () => { listEvents().catch(console.error); });
+      // Hook para recargar al cambiar fechas
+      const cal = window._dashboardCalendar;
+      if (cal && !cal.__gcalHooked) {
+        cal.__gcalHooked = true;
+        cal.on('datesSet', () => { listEvents().catch(error); });
+      }
+    } catch (e) {
+      error('Fallo startFlow', e);
+      alert('No se pudo conectar con Google Calendar. Revisa la consola.');
+    } finally {
+      _initing = false;
     }
   }
 
-  function loadGapiAndInit() {
-    gapi.load('client:auth2', () => {
-      gapi.auth2.init({ client_id: CLIENT_ID })
-        .then(initClient)
-        .catch(console.error);
-    });
-  }
-
-  // ---------- Botones conectar / desconectar ----------
+  // ===== Botones =====
   function wireButtons() {
     const byId = id => document.getElementById(id);
+    const bind = (id, fn) => {
+      const el = byId(id);
+      if (!el) { warn(`Botón ${id} no encontrado (opcional).`); return; }
+      const handler = (e) => { e.preventDefault(); e.stopPropagation(); fn(); };
+      el.addEventListener('click', handler, true);
+      el.addEventListener('pointerup', handler, true);
+    };
 
-    const connect = byId('btnGcalConnect');
-    if (connect) {
-      const handler = (e) => {
-        e.preventDefault(); e.stopPropagation();
-        if (window.gapi?.client) {
-          ensureSignedIn().then(listEvents).catch(console.error);
+    bind('btnGcalConnect', () => {
+      log('Conectar pulsado');
+      startFlow(); // SIEMPRE corre el flujo robusto
+    });
+
+    bind('btnGcalDisconnect', async () => {
+      try {
+        const auth = gapi?.auth2?.getAuthInstance?.();
+        if (auth) {
+          await auth.signOut();
+          const cal = window._dashboardCalendar;
+          cal?.getEventSourceById(SOURCE_ID)?.remove();
+          log('Sesión cerrada y eventos removidos');
         } else {
-          waitFor(() => !!window.gapi, 50, 10000)
-            .then(loadGapiAndInit)
-            .catch(console.error);
+          warn('auth2 no estaba inicializado');
         }
-      };
-      connect.addEventListener('click', handler, true);
-      connect.addEventListener('pointerup', handler, true);
-    }
-
-    const disconnect = byId('btnGcalDisconnect');
-    if (disconnect) {
-      const handler = (e) => {
-        e.preventDefault(); e.stopPropagation();
-        try {
-          const auth = gapi.auth2.getAuthInstance();
-          auth.signOut().then(() => {
-            const cal = window._dashboardCalendar;
-            const src = cal?.getEventSourceById(SOURCE_ID);
-            if (src) src.remove();
-            console.log('[gcal] sesión cerrada y eventos removidos');
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      disconnect.addEventListener('click', handler, true);
-      disconnect.addEventListener('pointerup', handler, true);
-    }
-  }
-
-  // Utilidad: esperar condición (p.ej., gapi cargó)
-  function waitFor(cond, interval = 50, timeout = 5000) {
-    return new Promise((resolve, reject) => {
-      const start = Date.now();
-      const t = setInterval(() => {
-        if (cond()) { clearInterval(t); resolve(true); }
-        else if (Date.now() - start > timeout) { clearInterval(t); reject(new Error('timeout waitFor')); }
-      }, interval);
+      } catch (e) {
+        error(e);
+      }
     });
   }
 
-  // Arranque
-  document.addEventListener('DOMContentLoaded', () => {
+  // ===== Arranque =====
+  document.addEventListener('DOMContentLoaded', async () => {
     wireButtons();
 
-    // Si calendario y gapi ya están, inicia; si no, espera
-    const tryStart = () => {
-      if (window._dashboardCalendar && window.gapi) { loadGapiAndInit(); return true; }
-      return false;
-    };
+    // Si gapi ya cargó y tu calendario existe, permite “auto-inicio” opcional:
+    // (si quieres auto-conectar, descomenta la siguiente línea)
+    // startFlow();
 
-    if (!tryStart()) {
-      waitFor(() => !!window._dashboardCalendar && !!window.gapi, 100, 10000)
-        .then(loadGapiAndInit)
-        .catch(() => console.warn('[gcal] esperando calendario o gapi...'));
+    // O espera a que exista el calendario antes de permitir flujo:
+    if (!window._dashboardCalendar) {
+      try {
+        await waitFor(() => !!window._dashboardCalendar, 100, 10000);
+        log('FullCalendar disponible.');
+      } catch {
+        warn('No apareció window._dashboardCalendar (¿se expuso en dashboard-calendar.js?)');
+      }
     }
   });
 })();
+
+//v1.1
