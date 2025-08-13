@@ -6,8 +6,9 @@
 
 (function () {
   // ===== CREDENCIALES =====
-  const CLIENT_ID = '866172124153-n0vg6red5pdadtm9ia61a9vksh79ip6j.apps.googleusercontent.com';
-  const API_KEY   = 'AIzaSyAgIfQt1_SbtAlAhHQhvn_W2WN7fAtG478';
+  const CLIENT_ID = '866172124153-67a30203sq77e78vkhkl3fqmaduv3e8d.apps.googleusercontent.com';
+  const API_KEY   = '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';
+
 
   // ===== CONST =====
   const SCOPES    = 'https://www.googleapis.com/auth/calendar.readonly';
@@ -211,5 +212,6 @@
     }
   });
 })();
+
 
 //v1.1
