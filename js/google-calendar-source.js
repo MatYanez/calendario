@@ -187,4 +187,44 @@
   });
 })();
 
-//v1.6
+
+
+// Google Identity Services: flujo manual para obtener access token
+const CLIENT_ID = '866172124153-67a30203sq77e78vkhkl3fqmaduv3e8d.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
+
+let tokenClient;
+
+function initGSI() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (tokenResponse) => {
+      if (tokenResponse.error) {
+        console.error('Error token:', tokenResponse);
+        alert('No se pudo obtener el token');
+        return;
+      }
+      console.log('Token recibido:', tokenResponse.access_token);
+
+      // Guardar token para usarlo con gapi.client
+      gapi.client.setToken({ access_token: tokenResponse.access_token });
+
+      // Ahora ya puedes llamar la API de Calendar
+      listEvents();
+    }
+  });
+}
+
+function requestAccessToken() {
+  if (!tokenClient) {
+    console.error('tokenClient no inicializado');
+    return;
+  }
+  tokenClient.requestAccessToken();
+}
+
+
+
+
+//v1.7
