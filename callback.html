@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Callback OAuth</title>
+</head>
+<body>
+  <script>
+    // Este script obtiene parámetros de la URL y se los envía a la ventana principal
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      window.opener && window.opener.postMessage({ code }, window.location.origin);
+      window.close();
+    })();
+  </script>
+  <p>Redirigiendo...</p>
+</body>
+</html>
