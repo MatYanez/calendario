@@ -2,13 +2,12 @@
 // Integra Google Calendar (privado) con OAuth y FullCalendar.
 // Requiere: <script async defer src="https://apis.google.com/js/api.js"></script>
 // y que window._dashboardCalendar exista (lo expones en dashboard-calendar.js)
-// Usa gapi.client + gapi.auth2 (flujo popup). Carga e inicializa de forma robusta.
+// Usar Google Identity Services para login (no gapi.auth2)
 
 (function () {
   // ===== CREDENCIALES =====
   const CLIENT_ID = '866172124153-67a30203sq77e78vkhkl3fqmaduv3e8d.apps.googleusercontent.com';
   const API_KEY   = 'AIzaSyDH3fcelNs-FJDRKHD6nPylRUa7d5i7vyI';
-
 
   // ===== CONST =====
   const SCOPES    = 'https://www.googleapis.com/auth/calendar.readonly';
@@ -82,7 +81,7 @@
     log(`cargados ${items.length} eventos para ${new Date(range.start).toDateString()} → ${new Date(range.end).toDateString()}`);
   }
 
-  // ===== GAPI AUTH FLOW (robusto) =====
+  // ===== GAPI CLIENT LOADER =====
   let _initing = false;
 
   async function ensureGapiLoaded() {
@@ -91,14 +90,13 @@
     return true;
   }
 
-  async function ensureClientAndAuth2() {
+  async function ensureClient() {
     await ensureGapiLoaded();
 
     return new Promise((resolve, reject) => {
       try {
-        gapi.load('client:auth2', async () => {
+        gapi.load('client', async () => {
           try {
-            // init client (API key + discovery)
             if (!gapi.client?.calendar) {
               await gapi.client.init({
                 apiKey: API_KEY,
@@ -106,44 +104,30 @@
               });
               log('gapi.client inicializado');
             }
-
-            // init auth2 (si no existe)
-            if (!gapi.auth2 || !gapi.auth2.getAuthInstance?.()) {
-              await gapi.auth2.init({ client_id: CLIENT_ID, scope: SCOPES });
-              log('gapi.auth2 inicializado');
-            }
             resolve(true);
           } catch (e) {
-            error('Error en gapi.client.init / gapi.auth2.init', e);
+            error('Error en gapi.client.init', e);
             reject(e);
           }
         });
       } catch (e) {
-        error('Error al cargar módulos client:auth2', e);
+        error('Error al cargar módulo client', e);
         reject(e);
       }
     });
   }
 
-  async function ensureSignedIn() {
-    const auth = gapi.auth2.getAuthInstance();
-    if (!auth) throw new Error('auth2 no inicializado');
-    if (!auth.isSignedIn.get()) {
-      log('Solicitando login (popup)…');
-      await auth.signIn();
-      log('Login OK');
-    } else {
-      log('Ya estaba autenticado');
-    }
-  }
-
+  // ===== START FLOW (sin auth2, sólo gapi client) =====
   async function startFlow() {
     try {
       if (_initing) { log('Inicio en curso…'); return; }
       _initing = true;
 
-      await ensureClientAndAuth2();
-      await ensureSignedIn();
+      await ensureClient();
+
+      // Aquí deberás añadir la lógica para pedir token con Google Identity Services (próximos pasos)
+
+      // Por ahora sólo intentamos listar eventos (fallará si no estás autenticado)
       await listEvents();
 
       // Hook para recargar al cambiar fechas
@@ -173,20 +157,15 @@
 
     bind('btnGcalConnect', () => {
       log('Conectar pulsado');
-      startFlow(); // SIEMPRE corre el flujo robusto
+      startFlow();
     });
 
     bind('btnGcalDisconnect', async () => {
       try {
-        const auth = gapi?.auth2?.getAuthInstance?.();
-        if (auth) {
-          await auth.signOut();
-          const cal = window._dashboardCalendar;
-          cal?.getEventSourceById(SOURCE_ID)?.remove();
-          log('Sesión cerrada y eventos removidos');
-        } else {
-          warn('auth2 no estaba inicializado');
-        }
+        // Ya no hay auth2 para desconectar. Tendrás que gestionar esto con GSI.
+        log('Desconectar pulsado. Implementar logout con Google Identity Services.');
+        const cal = window._dashboardCalendar;
+        cal?.getEventSourceById(SOURCE_ID)?.remove();
       } catch (e) {
         error(e);
       }
@@ -197,11 +176,6 @@
   document.addEventListener('DOMContentLoaded', async () => {
     wireButtons();
 
-    // Si gapi ya cargó y tu calendario existe, permite “auto-inicio” opcional:
-    // (si quieres auto-conectar, descomenta la siguiente línea)
-    // startFlow();
-
-    // O espera a que exista el calendario antes de permitir flujo:
     if (!window._dashboardCalendar) {
       try {
         await waitFor(() => !!window._dashboardCalendar, 100, 10000);
@@ -213,5 +187,4 @@
   });
 })();
 
-
-//v1.5
+//v1.6
