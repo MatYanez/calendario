@@ -118,59 +118,77 @@
   }
 
   // ===== START FLOW (sin auth2, sólo gapi client) =====
-  async function startFlow() {
-    try {
-      if (_initing) { log('Inicio en curso…'); return; }
-      _initing = true;
+async function startFlow() {
+  try {
+    if (_initing) { log('Inicio en curso…'); return; }
+    _initing = true;
 
-      await ensureClient();
+    await ensureClient(); // Inicializa gapi.client con apiKey y discoveryDocs
 
-      // Aquí deberás añadir la lógica para pedir token con Google Identity Services (próximos pasos)
+    await listEvents(); // Esta función ahora usará el token seteado en gapi.client
 
-      // Por ahora sólo intentamos listar eventos (fallará si no estás autenticado)
-      await listEvents();
-
-      // Hook para recargar al cambiar fechas
-      const cal = window._dashboardCalendar;
-      if (cal && !cal.__gcalHooked) {
-        cal.__gcalHooked = true;
-        cal.on('datesSet', () => { listEvents().catch(error); });
-      }
-    } catch (e) {
-      error('Fallo startFlow', e);
-      alert('No se pudo conectar con Google Calendar. Revisa la consola.');
-    } finally {
-      _initing = false;
+    const cal = window._dashboardCalendar;
+    if (cal && !cal.__gcalHooked) {
+      cal.__gcalHooked = true;
+      cal.on('datesSet', () => { listEvents().catch(error); });
     }
+  } catch (e) {
+    error('Fallo startFlow', e);
+    alert('No se pudo conectar con Google Calendar. Revisa la consola.');
+  } finally {
+    _initing = false;
   }
+}
 
   // ===== Botones =====
-  function wireButtons() {
-    const byId = id => document.getElementById(id);
-    const bind = (id, fn) => {
-      const el = byId(id);
-      if (!el) { warn(`Botón ${id} no encontrado (opcional).`); return; }
-      const handler = (e) => { e.preventDefault(); e.stopPropagation(); fn(); };
-      el.addEventListener('click', handler, true);
-      el.addEventListener('pointerup', handler, true);
-    };
+function wireButtons() {
+  const byId = id => document.getElementById(id);
+  const bind = (id, fn) => {
+    const el = byId(id);
+    if (!el) { warn(`Botón ${id} no encontrado (opcional).`); return; }
+    const handler = (e) => { e.preventDefault(); e.stopPropagation(); fn(); };
+    el.addEventListener('click', handler, true);
+    el.addEventListener('pointerup', handler, true);
+  };
 
-    bind('btnGcalConnect', () => {
-      log('Conectar pulsado');
-      startFlow();
-    });
+  bind('btnGcalConnect', () => {
+    log('Conectar pulsado');
+    if (!tokenClient) {
+      initGSI();
+    }
+    requestAccessToken();
+  });
 
-    bind('btnGcalDisconnect', async () => {
-      try {
-        // Ya no hay auth2 para desconectar. Tendrás que gestionar esto con GSI.
-        log('Desconectar pulsado. Implementar logout con Google Identity Services.');
-        const cal = window._dashboardCalendar;
-        cal?.getEventSourceById(SOURCE_ID)?.remove();
-      } catch (e) {
-        error(e);
+  bind('btnGcalDisconnect', async () => {
+    try {
+      log('Desconectar pulsado');
+
+      // Revocar token para cerrar sesión GSI
+      if (gapi.client.getToken()) {
+        const accessToken = gapi.client.getToken().access_token;
+        if (accessToken) {
+          await fetch(`https://oauth2.googleapis.com/revoke?token=${accessToken}`, {
+            method: 'POST',
+            headers: { 'Content-type': 'application/x-www-form-urlencoded' },
+          });
+          log('Token revocado');
+        }
       }
-    });
-  }
+
+      // Limpiar token en gapi.client
+      gapi.client.setToken(null);
+
+      // Quitar eventos del calendario
+      const cal = window._dashboardCalendar;
+      cal?.getEventSourceById(SOURCE_ID)?.remove();
+
+      alert('Sesión cerrada correctamente');
+    } catch (e) {
+      error(e);
+    }
+  });
+}
+
 
   // ===== Arranque =====
   document.addEventListener('DOMContentLoaded', async () => {
@@ -227,4 +245,4 @@ function requestAccessToken() {
 
 
 
-//v1.7
+//v1.8
