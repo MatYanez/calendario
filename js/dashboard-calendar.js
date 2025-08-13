@@ -11,7 +11,7 @@
   }
   function startOfMondayWeek(date) {
     const d = new Date(date);
-    const day = d.getDay(); // 0 dom, 1 lun, ... 6 sáb
+    const day = d.getDay();
     const diff = (day === 0 ? -6 : 1 - day);
     d.setDate(d.getDate() + diff);
     d.setHours(0,0,0,0);
@@ -31,7 +31,7 @@
   }
 
   // ---------- Estado ----------
-  let currentMode = 'week'; // 'week' | 'month' | 'quarter'
+  let currentMode = 'week';
   let anchorDate = new Date();
   let calendar = null;
 
@@ -68,7 +68,7 @@
     calendar.setOption('visibleRange', undefined);
   }
 
-  // Modos
+  // Modos de vista
   function gotoWeekOf(date) {
     if (!calendar) return;
     currentMode = 'week';
@@ -94,7 +94,7 @@
     currentMode = 'quarter';
     anchorDate = new Date(date);
     const first = startOfMonth(anchorDate);
-    const end = startOfMonth(addMonths(first, 3)); // exclusivo
+    const end = startOfMonth(addMonths(first, 3));
     calendar.setOption('visibleRange', { start: first, end: end });
     calendar.changeView('threeMonth', first);
     console.log('[calendar] view => 3 Meses (', first.toDateString(), '→', end.toDateString(), ')');
@@ -119,10 +119,13 @@
     else { anchorDate = addMonths(anchorDate, 3); gotoQuarterOf(anchorDate); }
   }
 
-  // ---------- Inicialización segura al estar el DOM listo ----------
+  // ---------- Inicialización ----------
   function init() {
     const el = document.getElementById('dashboardCalendar');
-    if (!el) { console.warn('[dashboard-calendar] No existe #dashboardCalendar en el DOM.'); return; }
+    if (!el) {
+      console.warn('[dashboard-calendar] No existe #dashboardCalendar en el DOM.');
+      return;
+    }
 
     calendar = new FullCalendar.Calendar(el, {
       timeZone: 'America/Santiago',
@@ -134,46 +137,48 @@
       views: {
         dayGridWeek:  { dayHeaderFormat: { weekday: 'short', day: '2-digit', month: 'short' } },
         dayGridMonth: { dayMaxEventRows: true },
-        threeMonth:   { type: 'multiMonthYear', duration: { months: 3 } } // requiere multimonth cargado
+        threeMonth:   { type: 'multiMonthYear', duration: { months: 3 } }
       },
       eventClick(info) {
         console.log('[eventClick]', info.event.id, info.event.title);
       }
     });
 
-    // Wire de botones (robusto)
+    calendar.render();
+
+    //  Exponer la instancia globalmente
+    window._dashboardCalendar = calendar;
+
+    // Botones de navegación
     const on = (id, handler) => {
-      const el = document.getElementById(id);
-      if (!el) { console.warn(`[dashboard-calendar] ${id}: NO ENCONTRADO`); return; }
+      const elBtn = document.getElementById(id);
+      if (!elBtn) { console.warn(`[dashboard-calendar] ${id}: NO ENCONTRADO`); return; }
       const wrap = (ev) => {
         ev.preventDefault(); ev.stopPropagation();
         console.log(`[ui] click ${id}`);
         handler();
       };
-      el.addEventListener('click', wrap, true);
-      el.addEventListener('pointerup', wrap, true);
+      elBtn.addEventListener('click', wrap, true);
+      elBtn.addEventListener('pointerup', wrap, true);
     };
 
-    on('btnCalWeek',   () => gotoWeekOf(anchorDate));
-    on('btnCalMonth',  () => gotoMonthOf(anchorDate));
-    on('btnCalQuarter',() => gotoQuarterOf(anchorDate));
-    on('btnCalToday',  () => goToday());
-    on('btnCalPrev',   () => goPrev());
-    on('btnCalNext',   () => goNext());
+    on('btnCalWeek', () => gotoWeekOf(anchorDate));
+    on('btnCalMonth', () => gotoMonthOf(anchorDate));
+    on('btnCalQuarter', () => gotoQuarterOf(anchorDate));
+    on('btnCalToday', () => goToday());
+    on('btnCalPrev', () => goPrev());
+    on('btnCalNext', () => goNext());
 
-    // Atajos de teclado (por si los clicks estuvieran bloqueados por estilos/overlay):
+    // Atajos de teclado
     document.addEventListener('keydown', (e) => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) return;
       if (e.key.toLowerCase() === 'w') { console.log('[kb] W => Semana'); gotoWeekOf(anchorDate); }
       if (e.key.toLowerCase() === 'm') { console.log('[kb] M => Mes'); gotoMonthOf(anchorDate); }
-      if (e.key === '3')               { console.log('[kb] 3 => 3 Meses'); gotoQuarterOf(anchorDate); }
-      if (e.key === 'ArrowLeft')       { console.log('[kb] ← => Prev'); goPrev(); }
-      if (e.key === 'ArrowRight')      { console.log('[kb] → => Next'); goNext(); }
+      if (e.key === '3') { console.log('[kb] 3 => 3 Meses'); gotoQuarterOf(anchorDate); }
+      if (e.key === 'ArrowLeft') { console.log('[kb] ← => Prev'); goPrev(); }
+      if (e.key === 'ArrowRight') { console.log('[kb] → => Next'); goNext(); }
       if (e.key.toLowerCase() === 't') { console.log('[kb] T => Hoy'); goToday(); }
     });
-
-    calendar.render();
-    gotoWeekOf(new Date()); // por defecto: semana lun–dom
   }
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -183,4 +188,5 @@
   }
 })();
 
-//v1.6
+
+//v.2
