@@ -7,7 +7,7 @@
 (function () {
   // ===== CREDENCIALES =====
   const CLIENT_ID = '866172124153-67a30203sq77e78vkhkl3fqmaduv3e8d.apps.googleusercontent.com';
-  const API_KEY   = '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';
+  const API_KEY   = 'AIzaSyDH3fcelNs-FJDRKHD6nPylRUa7d5i7vyI';
 
 
   // ===== CONST =====
@@ -214,4 +214,4 @@
 })();
 
 
-//v1.1
+//v1.5
